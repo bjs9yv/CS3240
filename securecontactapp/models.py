@@ -1,15 +1,21 @@
 from django.db import models
 
-# Create your models here.
-class User(models.Model):
-    pass
 class UserGroup(models.Model):
     pass
+
+class User(models.Model):
+    group = models.ForeignKey(UserGroup)
+
 class Report(models.Model):
-    pass
-class File(model.Model):
-    pass
+    owner = models.ForeignKey(User)
+    folder = models.ForeignKey(Folder)
+
+class File(models.Model):
+    attached_to = models.ForeignKey(Report)
+
 class Message(models.Model):
-    pass
+    sender = models.ForeignKey(User)
+    recipient = models.ForeignKey(User)
+
 class Folder(models.Model):
-    pass
+    parent = models.ForeignKey(Folder)
