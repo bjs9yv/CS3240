@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'team16project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'testdatabase',
+        'NAME': 'postgresql-reticulated-6097',
         'USER': 'postgresql',
         'PASSWORD': 'password',
         'HOST': '127.0.0.1',
@@ -99,7 +99,8 @@ USE_TZ = True
 
 
 # Parse database configuration from $DATABASE_URL
-DATABASES['default'] = dj_database_url.config()
+DATABASE_URL = 'postgres://lbhnnnsdmlpcdu:UaqSlnd22y5mFymt4B056ISHOh@ec2-54-83-36-203.compute-1.amazonaws.com:5432/d8m4ruf9jnfdfr'
+DATABASES['default'] = dj_database_url.config(default=DATABASE_URL)
 
 # Enable Connection Pooling (if desired)
 DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
