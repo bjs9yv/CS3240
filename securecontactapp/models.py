@@ -1,13 +1,8 @@
 from django.db import models
-
-class User(models.Model):
-    group = models.ForeignKey('UserGroup')
-
-class UserGroup(models.Model):
-    pass
+from django.contrib.auth.models import User
 
 class Report(models.Model):
-    owner = models.ForeignKey('User')
+    owner = models.ForeignKey(User)
     folder = models.ForeignKey('Folder')
 
 class Folder(models.Model):
@@ -17,5 +12,5 @@ class File(models.Model):
     attached_to = models.ForeignKey('Report')
 
 class Message(models.Model):
-    sender = models.ForeignKey('User', related_name='message_sender')
-    recipient = models.ForeignKey('User', related_name='message_recipient')
+    sender = models.ForeignKey(User, related_name='message_sender')
+    recipient = models.ForeignKey(User, related_name='message_recipient')
