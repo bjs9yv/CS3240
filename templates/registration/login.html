@@ -15,6 +15,7 @@
     {% endif %}
 {% endif %}
 
+<center>
 <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
 {% csrf_token %}
 <table>
@@ -35,4 +36,5 @@
 {# Assumes you setup the password_reset view in your URLconf #}
 <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
 <p><a href="{% url 'register' %}">Create an account</a></p>
+</center>
 {% endblock %}
