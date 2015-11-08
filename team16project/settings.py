@@ -71,11 +71,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'team16project.wsgi.application'
 
+# Cookies and autologout
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 60 # 5 minutes
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
-
 # mhk4g: Keys should be correct but values need to be updated
 DATABASES = {
     'default': {
