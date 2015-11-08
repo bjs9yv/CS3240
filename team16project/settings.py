@@ -72,8 +72,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'team16project.wsgi.application'
 
 # Cookies and autologout
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_COOKIE_AGE = 60 # 5 minutes
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 60* 60 # 60 minutes
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
