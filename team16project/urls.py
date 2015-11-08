@@ -9,4 +9,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('django.contrib.auth.urls')),
     url(r'^$', 'securecontactapp.views.home', name='home'),
+    url(r'^register/$', 'securecontactapp.views.registration', name='register'),
 )

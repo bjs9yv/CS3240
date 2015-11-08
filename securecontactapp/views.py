@@ -6,3 +6,6 @@ from django.contrib.auth.decorators import login_required
 @login_required(login_url = '/login')
 def home(request):
     return HttpResponse('Hello there!')
+
+def registration(request):
+    return HttpResponse('lets make a new account')
