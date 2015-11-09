@@ -1,10 +1,13 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.conf import settings
+from django.shortcuts import render, resolve_url
+from django.http import HttpResponseRedirect
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.template.response import TemplateResponse
 
 
 # Create your views here.
@@ -15,18 +18,15 @@ def home(request):
 @sensitive_post_parameters()
 @csrf_protect
 @never_cache
-def registration(request,template_name='registration/registration.html'):
-    # get user form data here with magic...
-    # maybe by modifying this: https://docs.djangoproject.com/en/1.8/_modules/django/contrib/auth/views/
-    
+def registration(request):
     if request.method == "POST":
-        pass
-        # extract data from POST
-        # create a new user here with the following:
-        # user = User.objects.create_user('john', 'lennon@thebeatles.com', 'pass')
+        form = UserCreationForm(data=request.POST)
+        if form.is_valid():
+            pass
+            # user = User.objects.create_user('john', 'lennon@thebeatles.com', 'pass')
+            return HttpResponseRedirect(resolve_url(settings.LOGIN_URL))
     else:
-        return render(request, template_name)
-        
-    
-    
-    
+        form = UserCreationForm()
+
+    context = {'form': form}
+    return TemplateResponse(request, 'registration/registration.html', context)

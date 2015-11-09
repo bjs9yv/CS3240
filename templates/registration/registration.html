@@ -5,31 +5,28 @@
 {% block content %}
 
 <center>
-<form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+<form method="post" action="{% url 'register' %}">
 {% csrf_token %}
 <table>
 <tr>
-	<h3>Please enter your desired username and password</h3>
 </tr>
 <tr>
     <td>{{ form.username.label_tag }}</td>
     <td>{{ form.username }}</td>
 </tr>
 <tr>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
+    <td>{{ form.password1.label_tag }}</td>
+    <td>{{ form.password1 }}</td>
 </tr>
 <tr>
-	<h3>Please confirm your password</h3>
 </tr>
 <tr>
-	<td>{{ form.password.label_tag }}</td>
-	<td>{{ form.password }}</td>
+	<td>{{ form.password2.label_tag }}</td>
+	<td>{{ form.password2 }}</td>
 </tr>
 </table>
 
-<input type="submit" value="login" />
-<input type="hidden" name="next" value="{{ next }}" />
+<input type="submit" value="register" />
 </form>
 </center>
 
