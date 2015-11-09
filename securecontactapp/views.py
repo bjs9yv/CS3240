@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 @login_required(login_url = '/login')
 def home(request):
-    return HttpResponse('Hello there!')
+    return render(request, 'home.html')
 
 #@csrf_protect # protects against cross site request forgeries
 def registration(request):
