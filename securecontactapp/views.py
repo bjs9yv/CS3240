@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.shortcuts import render, resolve_url
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.template.response import TemplateResponse
+from django.core.exceptions import ObjectDoesNotExist
 
 
 # Create your views here.
@@ -29,3 +30,16 @@ def registration(request):
 
     context = {'form': form}
     return TemplateResponse(request, 'registration/registration.html', context)
+
+@sensitive_post_parameters('username', 'password')
+def check_login(request):
+    if request.method == 'POST':
+        try:
+            user = User.objects.get(username=request.POST['username'])
+            valid = user.check_password(request.POST['password'])
+        except ObjectDoesNotExist:
+            valid = False
+    else:
+        valid = False
+
+    return JsonResponse({'valid': valid})
