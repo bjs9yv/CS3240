@@ -20,6 +20,7 @@ def registration(request,template_name='registration/registration.html'):
     # maybe by modifying this: https://docs.djangoproject.com/en/1.8/_modules/django/contrib/auth/views/
     
     if request.method == "POST":
+        pass
         # extract data from POST
         # create a new user here with the following:
         # user = User.objects.create_user('john', 'lennon@thebeatles.com', 'pass')
