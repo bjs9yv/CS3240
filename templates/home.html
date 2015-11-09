@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<center>
+<h1>Nice home page right?</h1>
+<p><a href="http://www.cs.virginia.edu/~horton/horton2001.jpg"></a></p>
+</center>
+
+<p><a href="{% url 'logout' %}">Gotta Go?</a></p>
+
+{% endblock %}
