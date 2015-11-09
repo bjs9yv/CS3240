@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 # Create your views here.
 @login_required(login_url = '/login')
 def home(request):
-    return HttpResponse('Hello there!')
+    return render(request, 'home.html')
 
 @sensitive_post_parameters()
 @csrf_protect
