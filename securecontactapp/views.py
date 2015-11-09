@@ -15,7 +15,7 @@ from django.template.response import TemplateResponse
 def home(request):
     return render(request, 'home.html')
 
-@sensitive_post_parameters()
+@sensitive_post_parameters('username', 'password1', 'password2')
 @csrf_protect
 @never_cache
 def registration(request):
