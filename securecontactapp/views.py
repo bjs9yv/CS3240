@@ -18,8 +18,14 @@ def home(request):
 def registration(request,template_name='registration/registration.html'):
     # get user form data here with magic...
     # maybe by modifying this: https://docs.djangoproject.com/en/1.8/_modules/django/contrib/auth/views/
-
-    # create a new user here with the following:
-    # user = User.objects.create_user('john', 'lennon@thebeatles.com', 'pass')
-
-    return render(request, template_name)
+    
+    if request.method == "POST":
+        # extract data from POST
+        # create a new user here with the following:
+        # user = User.objects.create_user('john', 'lennon@thebeatles.com', 'pass')
+    else:
+        return render(request, template_name)
+        
+    
+    
+    
