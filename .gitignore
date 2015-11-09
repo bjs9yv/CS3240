@@ -1,25 +1,3 @@
-
-Skip to content
-This repository
-
-    Pull requests
-    Issues
-    Gist
-
-    @mhk4g
-
-5
-0
-
-    0
-
-cberman/cs3240-f15-team16 private
-
-cs3240-f15-team16/.gitignore
-9d56a1b 14 days ago
-@mhk4g mhk4g Hurray
-1 contributor
-59 lines (49 sloc) 713 Bytes
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -79,7 +57,16 @@ docs/_build/
 # PyBuilder
 target/
 
-    Status API Training Shop Blog About Pricing 
+# Mac stuff
+.DS_store
 
-    © 2015 GitHub, Inc. Terms Privacy Security Contact Help 
+# vim stuff
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
 
+# IDE stuff
+.idea

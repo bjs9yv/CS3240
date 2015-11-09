@@ -16,7 +16,7 @@
     {% endif %}
 {% endif %}
 <img src="/static/securecontactapp/SecureContact.png">
-<form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+<form method="post"  autocomplete="off" action="{% url 'django.contrib.auth.views.login' %}">
 {% csrf_token %}
 <table>
 <tr>
