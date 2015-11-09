@@ -22,8 +22,7 @@ def registration(request):
     if request.method == "POST":
         form = UserCreationForm(data=request.POST)
         if form.is_valid():
-            pass
-            # user = User.objects.create_user('john', 'lennon@thebeatles.com', 'pass')
+            form.save()
             return HttpResponseRedirect(resolve_url(settings.LOGIN_URL))
     else:
         form = UserCreationForm()
