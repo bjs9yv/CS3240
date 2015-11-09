@@ -11,4 +11,4 @@ def home(request):
 #@csrf_protect # protects against cross site request forgeries
 def registration(request):
     # create a new user here with magic
-    return render(request, 'template/registration.html')
+    return render(request, 'templates/registration/registration.html')
