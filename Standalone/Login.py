@@ -2,7 +2,7 @@ __author__ = 'adminuser'
 import RSA
 import os
 import getpass
-
+import requests
 
 USERNAME="bnc4vk"
 PASSWORD="password"
@@ -12,17 +12,16 @@ print("** Launching standalone application...\n")
 # lOGIN
 check = True
 while check:
-    usr = input("Enter SecureContact username: ")
-    if usr == USERNAME: # TODO: this will have to check the database online 
-        check = False
-        while True:
-            pswd = getpass.getpass()
-            if pswd == PASSWORD:
-                print('\n')
-                break
+    user = input("Enter SecureContact username: ")
+    pswd = getpass.getpass()
+    passdic = {'username':user,'password':pswd}
+    response = requests.get('http://t16-heroku-app.herokuapp.com/check_login/', params=passdic)
+    if response.json()['valid']:
+        print("** Login Successfull \n")
+        break
     else:
-        print("Username not recognized, please try again")
-
+        print("Username or password not recognized, please try again")
+        
 # POST LOGIN PROCEDURE
 if "PrivateKey.txt" not in os.listdir(os.getcwd()): # TODO change this to search sub directory where keys are stored
     print("** It looks like this is your first time! Generating key pair...\n")
