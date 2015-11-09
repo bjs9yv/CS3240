@@ -23,9 +23,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "7uxhhb09352a3n(gyzte4a(5t5t@29s3*2nh$rwq#hyz+3rx1f"
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# also used for template settings
 DEBUG = True
-
-TEMPLATE_DEBUG = True
 
 
 # Application definition
