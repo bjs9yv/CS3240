@@ -1,0 +1,12 @@
+/* TEAM */
+    Crypto Wizard: Collin Berman
+
+    Chief Sage: Ben Cohen
+
+    Arch Pixelator: Matt Kauper
+
+    Pleb: Brian Schwartz
+
+/* THANKS */
+
+    Prof: Tom Horton
