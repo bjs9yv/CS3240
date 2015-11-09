@@ -10,5 +10,4 @@ urlpatterns = patterns('',
     url(r'^', include('django.contrib.auth.urls')),
     url(r'^$', 'securecontactapp.views.home', name='home'),
     url(r'^register/$', 'securecontactapp.views.registration', name='register'),
-    url(r'^logged_out/', 'securecontactapp.views.logout', name='logout')
 )
