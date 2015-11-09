@@ -33,13 +33,14 @@ def registration(request):
 
 @sensitive_post_parameters('username', 'password')
 def check_login(request):
-    if request.method == 'POST':
-        try:
-            user = User.objects.get(username=request.POST['username'])
-            valid = user.check_password(request.POST['password'])
-        except ObjectDoesNotExist:
-            valid = False
-    else:
-        valid = False
+    valid = False
+    if 'username' in request.GET and 'password' in request.GET:
+        user = User.objects.filter(username=request.GET['username'])
+        if user.exists():
+            valid = user.get().check_password(request.GET['password'])
+    elif 'username' in request.POST and 'password' in request.POST:
+        user = User.objects.filter(username=request.POST['username'])
+        if user.exists():
+            valid = user.get().check_password(request.POST['password'])
 
     return JsonResponse({'valid': valid})
