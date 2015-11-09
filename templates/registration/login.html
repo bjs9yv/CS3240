@@ -16,7 +16,6 @@
     {% endif %}
 {% endif %}
 <img src="/static/securecontactapp/SecureContact.png">
-<img src="/securecontactapp/static/securecontactapp/SecureContact.png">
 <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
 {% csrf_token %}
 <table>
@@ -31,10 +30,12 @@
 </table>
 
 <input type="submit" value="login" />
+<br>
 <input type="hidden" name="next" value="{{ next }}" />
 </form>
 
 {# Assumes you setup the password_reset view in your URLconf #}
+<br><br><br><br><br><br><br><br><br>
 <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
 <p><a href="{% url 'register' %}">Create an account</a></p>
 </center>
