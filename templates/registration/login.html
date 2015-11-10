@@ -104,9 +104,9 @@ input {
 }
 </style>
 
-{% extends "base.html" %}
+<!--{% extends "base.html" %}-->
 
-{% block content %}
+<!--{% block content %}-->
 <center>
 {% if form.errors %}
 <p>Your username and password didn't match. Please try again.</p>
@@ -152,4 +152,4 @@ input {
 <br><br><br><br><br><br><br><br><br>
 <pre><p><a href="{% url 'password_reset' %}">Lost password?</a> | <a href="{% url 'register' %}">Create an account</a></p></pre>
 </center>
-{% endblock %}
+<!--{% endblock %}-->
