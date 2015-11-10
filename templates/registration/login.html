@@ -123,25 +123,39 @@ input {
 <img src="/static/securecontactapp/SecureContact.png">
 </center>
 
-<div id="login">
-  <h2><span class="fontawesome-lock"></span>Sign In</h2>
-  <form method="post"  autocomplete="off" action="{% url 'django.contrib.auth.views.login' %}">
-    {% csrf_token %}
-    <fieldset>
-	  <p><label for="username">{{ form.username.label_tag }}</label></p>
-	  <!--<p><input type="username" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''"></input></p>-->
-	    {{ form.username }}
+<head>
 
-	  <p><label for="password">{{ form.password.label_tag }}</label></p>
-	  <!--<p><input type="password" id="password" value="password" onBlur="if(this.value=='')this.value='password'" onFocus="if(this.value=='password')this.value=''"></input></p>-->
-	    {{ form.password }}
+	<meta charset="utf-8">
 
-	  <p><input type="submit" value="Sign In" /><p>
-      <input type="hidden" name="next" value="{{ next }}" />
-    </fieldset>
-  </form>
-</div>
+	<title>Login</title>
 
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Varela+Round">
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+</head>
+<body>
+  <div id="login">
+    <h2><span class="fontawesome-lock"></span>Sign In</h2>
+    <form method="post"  autocomplete="off" action="{% url 'django.contrib.auth.views.login' %}">
+      {% csrf_token %}
+      <fieldset>
+	<p><label for="username">{{ form.username.label_tag }}</label></p>
+	<!--<p><input type="username" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''"></input></p>-->
+	{{ form.username }}
+
+	<p><label for="password">{{ form.password.label_tag }}</label></p>
+	<!--<p><input type="password" id="password" value="password" onBlur="if(this.value=='')this.value='password'" onFocus="if(this.value=='password')this.value=''"></input></p>-->
+	{{ form.password }}
+
+	<p><input type="submit" value="Sign In" /><p>
+	  <input type="hidden" name="next" value="{{ next }}" />
+      </fieldset>
+    </form>
+  </div>
+</body>
 
 <center>
 {# Assumes you setup the password_reset view in your URLconf #}
