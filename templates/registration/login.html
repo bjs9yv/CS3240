@@ -62,6 +62,14 @@ input {
 #login h2 span[class*="fontawesome-"] {
 	margin-right: 14px;
 }
+
+#login fieldset {
+	background-color: #fff;
+	-webkit-border-radius: 0 0 20px 20px;
+	-moz-border-radius: 0 0 20px 20px;
+	border-radius: 0 0 20px 20px;
+	padding: 20px 26px;
+}
 </style>
 
 <center>
@@ -84,18 +92,21 @@ input {
   <h2><span class="fontawesome-lock"></span>Sign In</h2>
   <form method="post"  autocomplete="off" action="{% url 'django.contrib.auth.views.login' %}">
     {% csrf_token %}
-    <table>
-      <tr>
-	<td>{{ form.username.label_tag }}</td>
-	<td>{{ form.username }}</td>
-      </tr>
-      <tr>
-	<td>{{ form.password.label_tag }}</td>
-	<td>{{ form.password }} </td>
-      </tr>
-    </table>
-    <input type="submit" value="login" />
-    <input type="hidden" name="next" value="{{ next }}" />
+    <fieldset>
+      <table>
+	<tr>
+	  <td>{{ form.username.label_tag }}</td>
+	  <td>{{ form.username }}</td>
+	</tr>
+	<tr>
+	  <!--<td>{{ form.password.label_tag }}</td>-->
+	  <p><label for="password">{{ form.password.label_tag }}</label></p>
+	  <td>{{ form.password }} </td>
+	</tr>
+      </table>
+      <input type="submit" value="login" />
+      <input type="hidden" name="next" value="{{ next }}" />
+    </fieldset>
   </form>
 </div>
 
