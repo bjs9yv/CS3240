@@ -120,16 +120,16 @@ input {
     <!--<p>Please login to see this page.</p>-->
     {% endif %}
 {% endif %}
-<img src="/static/securecontactapp/SecureContact.png">
 
+<img src="/static/securecontactapp/SecureContact.png">
+<center>
 
 <div id="login">
   <h2><span class="fontawesome-lock"></span>Sign In</h2>
   <form method="post"  autocomplete="off" action="{% url 'django.contrib.auth.views.login' %}">
     {% csrf_token %}
     <fieldset>
-	  <p for="username"></p>
-	    {{ form.username.label_tag }}
+	  <p><label for="username">{{ form.username.label_tag }}</label></p>
 	  <p type="username" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''"></p>
 	    {{ form.username }}
 
@@ -145,7 +145,7 @@ input {
 </div>
 
 
-
+<center>
 {# Assumes you setup the password_reset view in your URLconf #}
 <br><br><br><br><br><br><br><br><br>
 <pre><p><a href="{% url 'password_reset' %}">Lost password?</a> | <a href="{% url 'register' %}">Create an account</a></p></pre>
