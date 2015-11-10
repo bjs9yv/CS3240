@@ -131,12 +131,12 @@ input {
       <fieldset>
 	<!--<p><label for="username">{{ form.username.label_tag }}</label></p>-->
 	<p><label for="username">{{ form.username.label_tag }}</label></p>
-	<p><input type="text" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''"></input></p>
-	<!--{{ form.username }}-->
+	<!--<p><input type="text" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''"></input></p>-->
+	<p>{{ form.username }}</p>
 
 	<p><label for="password">{{ form.password.label_tag }}</label></p>
-	<p><input type="password" id="password" value="" onBlur="if(this.value=='')this.value='password'" onFocus="if(this.value=='password')this.value=''"></input></p>
-	<!--{{ form.password }}-->
+	<!--<p><input type="password" id="password" value="password" onBlur="if(this.value=='')this.value='password'" onFocus="if(this.value=='password')this.value=''"></input></p>-->
+	<p>{{ form.password }}</p>
 
 	<p><input type="submit" value="Sign In" /><p>
 	  <input type="hidden" name="next" value="{{ next }}" />
