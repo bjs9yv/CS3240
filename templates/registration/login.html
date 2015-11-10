@@ -93,7 +93,7 @@ input {
 <tr></tr>
 <tr>
     <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
+    <td>{{ form.password }} value="password" onBlur="if(this.value=='')this.value='password'" onFocus="if(this.value=='password')this.value=''"</td>
 </tr>
 <tr></tr>
 </table>
