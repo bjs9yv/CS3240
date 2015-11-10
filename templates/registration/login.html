@@ -93,17 +93,10 @@ input {
   <form method="post"  autocomplete="off" action="{% url 'django.contrib.auth.views.login' %}">
     {% csrf_token %}
     <fieldset>
-      <table>
-	<tr>
-	  <td>{{ form.username.label_tag }}</td>
-	  <td>{{ form.username }}</td>
-	</tr>
-	<tr>
-	  <!--<td>{{ form.password.label_tag }}</td>-->
+	  <!--<td>{{ form.username.label_tag }}</td>-->
+	  <!--<td>{{ form.username }}</td>-->
 	  <p><label for="password">{{ form.password.label_tag }}</label></p>
-	  <td>{{ form.password }} </td>
-	</tr>
-      </table>
+	  <p><input type="password" id="password" value="password" onBlur="if(this.value=='')this.value='password'" onFocus="if(this.value=='password')this.value=''">{{ form.password }}</input></p>
       <input type="submit" value="login" />
       <input type="hidden" name="next" value="{{ next }}" />
     </fieldset>
