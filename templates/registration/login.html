@@ -85,7 +85,7 @@ input {
 	border-radius: 3px;
 }
 
-#login fieldset input[type="username"], #login fieldset input[type="password"] {
+#login fieldset input[type="text"], #login fieldset input[type="password"] {
 	background-color: #eee;
 	color: #777;
 	padding: 4px 10px;
@@ -127,18 +127,19 @@ input {
   <div id="login">
     <h2><span class="fontawesome-lock"></span>Sign In</h2>
     <form method="post"  autocomplete="off" action="{% url 'django.contrib.auth.views.login' %}">
-      {% csrf_token %}
+      <!--{% csrf_token %}-->
       <fieldset>
-	<p><label for="username">{{ form.username.label_tag }}</label></p>
-	<p><input type="form.username" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''"></input></p>
-	{{ form.username }}
+	<!--<p><label for="username">{{ form.username.label_tag }}</label></p>-->
+	<p><label for="username">Username: </label></p>
+	<p><input type="text" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''"></input></p>
+	<!--{{ form.username }}-->
 
 	<p><label for="password">{{ form.password.label_tag }}</label></p>
 	<p><input type="password" id="password" value="password" onBlur="if(this.value=='')this.value='password'" onFocus="if(this.value=='password')this.value=''"></input></p>
-	{{ form.password }}
+	<!--{{ form.password }}-->
 
 	<p><input type="submit" value="Sign In" /><p>
-	  <!--<input type="hidden" name="next" value="{{ next }}" />-->
+	  <input type="hidden" name="next" value="{{ next }}" />
       </fieldset>
     </form>
   </div>
