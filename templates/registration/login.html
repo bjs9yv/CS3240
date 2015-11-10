@@ -130,7 +130,7 @@ input {
       {% csrf_token %}
       <fieldset>
 	<p><label for="username">{{ form.username.label_tag }}</label></p>
-	<p><input type="{{ form.username }}" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''"></input></p>
+	<p><input type="form.username" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''"></input></p>
 	{{ form.username }}
 
 	<p><label for="password">{{ form.password.label_tag }}</label></p>
