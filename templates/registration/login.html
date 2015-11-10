@@ -142,14 +142,14 @@ input {
 	<p><input type="submit" value="Sign In" /><p>
 	  <input type="hidden" name="next" value="{{ next }}" />
       </fieldset>
-      {% csrf_token %}
     </form>
   </div>
 </body>
-
+{% csrf_token %}
 <center>
 {# Assumes you setup the password_reset view in your URLconf #}
 <br><br><br><br><br><br><br><br><br>
 <pre><p><a href="{% url 'password_reset' %}">Lost password?</a> | <a href="{% url 'register' %}">Create an account</a></p></pre>
 </center>
+
 <!--{% endblock %}-->
