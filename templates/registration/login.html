@@ -126,10 +126,10 @@ input {
   <div id="login">
     <h2><span class="fontawesome-lock"></span>Sign In</h2>
     <form method="post"  autocomplete="off" action="{% url 'django.contrib.auth.views.login' %}">
-      {% csrf_token %}
+      
       <fieldset>
 	<p><label for="username">{{ form.username.label_tag }}</label></p>
-	<p><input type="text" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''">{{ form.username }}</input></p>
+	<p><input type="hidden" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''">{{ form.username }}</input></p>
 	<!--<p><input type="text" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''"></input></p>-->
 	
 
@@ -140,6 +140,7 @@ input {
 	<p><input type="submit" value="Sign In" /><p>
 	  <input type="hidden" name="next" value="{{ next }}" />
       </fieldset>
+      {% csrf_token %}
     </form>
   </div>
 </body>
