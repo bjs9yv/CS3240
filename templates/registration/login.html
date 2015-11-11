@@ -193,6 +193,7 @@ input {
 	<p><input type="submit" value="Sign In" /><p>
 	  <input type="hidden" name="next" value="{{ next }}" />
       </fieldset>
+      {% csrf_token %}
     </form>
   </div>
 </body>
