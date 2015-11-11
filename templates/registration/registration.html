@@ -99,7 +99,7 @@ input {
 }
 
 #login h2 {
-	background-color: #f95252;
+	background-color: #0066FF;
 	-webkit-border-radius: 20px 20px 0 0;
 	-moz-border-radius: 20px 20px 0 0;
 	border-radius: 20px 20px 0 0;
@@ -170,7 +170,7 @@ input {
 
 <body>
   <div id="login">
-    <h2><span class="fontawesome-lock"></span>Create An Account</h2>
+    <h2><span class="fontawesome-lock"></span>Create an Account</h2>
     <form method="post" autocomplete="off" action="{% url 'register' %}">
       
       <fieldset>
@@ -190,7 +190,7 @@ input {
 	<p><input type="hidden" id="password" value="password" onBlur="if(this.value=='')this.value='password'" onFocus="if(this.value=='password')this.value=''">{{ form.password2 }}</input></p>
 	<!--<p><input type="password" id="password" value="password" onBlur="if(this.value=='')this.value='password'" onFocus="if(this.value=='password')this.value=''"></input></p>-->
 
-	<input type="submit" value="register!" />
+	<input type="submit" value="Register!" />
       </fieldset>
       {% csrf_token %}
     </form>
