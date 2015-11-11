@@ -107,22 +107,6 @@ input {
 <!--{% extends "base.html" %}-->
 
 <!--{% block content %}-->
-<center>
-{% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
-{% endif %}
-
-{% if next %}
-    {% if user.is_authenticated %}
-     <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-    {% else %}
-     <p></p>
-    {% endif %}
-{% endif %}
-
-<img src="/static/securecontactapp/SecureContact.png">
-</center>
 
 <body>
   <div id="login">
@@ -152,4 +136,22 @@ input {
 <pre><p><a href="{% url 'password_reset' %}">Lost password?</a> | <a href="{% url 'register' %}">Create an account</a></p></pre>
 </center>
 
+<center>
+{% if form.errors %}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+{% if next %}
+    {% if user.is_authenticated %}
+     <p>Your account doesn't have access to this page. To proceed,
+    please login with an account that has access.</p>
+    {% else %}
+     <p></p>
+    {% endif %}
+{% endif %}
+
+<img src="/static/securecontactapp/SecureContact.png">
+</center>
+
+</html>
 <!--{% endblock %}-->
