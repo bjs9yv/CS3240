@@ -181,7 +181,8 @@ input {
     <form method="post"  autocomplete="off" action="{% url 'django.contrib.auth.views.login' %}">
       
       <fieldset>
-	<p><label for="username">{{ form.username.label_tag }}</label></p>
+	<!--<p><label for="username">{{ form.username.label_tag }}</label></p>-->
+	<p><label for="username">Username</label></p>
 	<p><input type="hidden" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''">{{ form.username }}</input></p>
 	<!--<p><input type="text" id="username" value="billyjoe" onBlur="if(this.value=='')this.value='billyjoe'" onFocus="if(this.value=='billyjoe')this.value=''"></input></p>-->
 	
