@@ -11,7 +11,6 @@ from django.template.response import TemplateResponse
 from django.core.exceptions import ObjectDoesNotExist
 
 
-# Create your views here.
 @login_required()
 def home(request):
     return render(request, 'home.html')
