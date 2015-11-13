@@ -1,0 +1,14 @@
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+  font-weight: 300;  
+}
+
+img {
+  padding: 10px;
+  background: #FFF;
+  border: 20px;
+  height:80px;
+  border-style: solid;
+  border-color: #F95252;
+}
