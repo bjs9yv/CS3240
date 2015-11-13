@@ -3,18 +3,18 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-
+<!-- 
 <style>
 div {
     background: #F95252 url("/static/securecontactapp/SecureContact.png") no-repeat center top;
-    height: 150px;
+    height: 100px;
 }
 </style>
+ -->
 <center>
-  <div>
-  </div>
+  <div style='background: #F95252 url("/static/securecontactapp/SecureContact.png") no-repeat center top' height="100px"></div>
 <!-- <img src="/static/securecontactapp/SecureContact.png"> -->
-<br><br>
+<br><br><br><br>
 <img src="http://www.cs.virginia.edu/~horton/horton2001.jpg">
 <p><a href="{% url 'logout' %}">Gotta Go?</a></p>
 </center>
