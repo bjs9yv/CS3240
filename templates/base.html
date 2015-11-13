@@ -1,30 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<link rel="stylesheet" type="text/css" href="../securecontactapp/static/securecontactapp/userstyle.css" />
-<head>
-    <title>{% block title %}Secure Contact App{% endblock %}</title>
-</head>
-
-<body>
-  <center>
-    
-    <div id="banner" style='background: #F95252; height: '150px';'>
-      <img src="../securecontactapp/static/securecontactapp/SecureContact.png">
-    </div>
-    
-    <div id="content">
-        {% block content %}{% endblock %}
-    </div>
-    
-</body>
-<p><a href="{% url 'logout' %}">Gotta Go?</a></p>
-</html>
-
-<!-- 
-Previous contents:
-
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <link rel="stylesheet" href="style.css" />
     <title>{% block title %}Secure Contact App{% endblock %}</title>
@@ -35,4 +10,4 @@ Previous contents:
         {% block content %}{% endblock %}
     </div>
 </body>
-</html> -->
+</html>
