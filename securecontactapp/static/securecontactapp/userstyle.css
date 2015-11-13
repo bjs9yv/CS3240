@@ -12,3 +12,30 @@ img {
   border-style: solid;
   border-color: #F95252;
 }
+
+.flex-container {
+  display: flex;
+  height: 60px;
+  color: #dedbef;
+}
+
+.flex-item {
+  height: 50px;
+  width: 100px;
+  color: #abbaab;
+  background-color: #F95252;
+  border: 10px;
+  border-color: #fff;
+  border-style: solid;
+  -webkit-flex: 1; /* Safari 6.1+ */
+  -ms-flex: 1; /* IE 10 */
+  flex: auto;
+  line-height: 15px;
+}
+
+.nav-tab {
+  vertical-align: middle;
+  text-align: center; 
+  line-height:50px;
+  color: white;
+}
