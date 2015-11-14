@@ -15,6 +15,10 @@ from django.core.exceptions import ObjectDoesNotExist
 def home(request):
     return render(request, 'home.html')
 
+@login_required()
+def reports(request):
+    return render(request, 'reports.html')
+
 @sensitive_post_parameters('username', 'password1', 'password2')
 @csrf_protect
 @never_cache
