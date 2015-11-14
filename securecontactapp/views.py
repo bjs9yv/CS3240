@@ -17,7 +17,7 @@ def home(request):
 
 @login_required()
 def reports(request):
-    return render(request, 'reports.html')
+    return TemplateResponse(request, 'reports.html')
 
 @sensitive_post_parameters('username', 'password1', 'password2')
 @csrf_protect
