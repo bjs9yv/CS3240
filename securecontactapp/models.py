@@ -7,6 +7,7 @@ class Report(models.Model):
     folder = models.ForeignKey('Folder')
     private = models.BooleanField()
     text = models.TextField()
+    timestamp = models.TimeField(auto_now_add=True)
 
 # Folders to hold other Reports
 class Folder(models.Model):
@@ -21,6 +22,7 @@ class File(models.Model):
     attached_to = models.ForeignKey('Report')
     encrypted = models.BooleanField()
     file = models.FileField(upload_to=report_filename)
+    timestamp = models.TimeField(auto_now_add=True)
 
 # Message sent from one user to another
 class Message(models.Model):
