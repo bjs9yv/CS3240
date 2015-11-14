@@ -10,6 +10,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.template.response import TemplateResponse
 from django.core.exceptions import ObjectDoesNotExist
 
+from .forms import MessageForm
 
 @login_required()
 def home(request):
@@ -59,3 +60,18 @@ def check_login(request):
             valid = user.get().check_password(request.POST['password'])
 
     return JsonResponse({'valid': valid})
+
+
+def get_message(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = MessageForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect('/message received/')
+
+    return render(request, 'messages.html', {'form': form})
