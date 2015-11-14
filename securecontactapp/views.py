@@ -20,7 +20,10 @@ def home(request):
 def reports(request):
     return render(request, 'reports.html')
 
-@login_required()
+#@login_required()
+#def messages(request):
+#    return render(request, 'messages.html')
+
 def messages(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
@@ -37,7 +40,7 @@ def messages(request):
         form = MessageForm()
 
     return render(request, 'messages.html', {'form': form})
-
+    
 @login_required()
 def groups(request):
     return render(request, 'reports.html')
