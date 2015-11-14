@@ -8,7 +8,7 @@
 
 <form action="/your-name/" method="post">
     {% csrf_token %}
-    {{ form }}
+    {{ form.message_body }}
     <input type="submit" value="Submit" />
 </form>
 
