@@ -22,7 +22,21 @@ def reports(request):
 
 @login_required()
 def messages(request):
-    return render(request, 'messages.html')
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = MessageForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect('/message received/')
+            
+    else:
+        form = MessageForm()
+
+    return render(request, 'messages.html', {'form': form})
 
 @login_required()
 def groups(request):
@@ -60,21 +74,3 @@ def check_login(request):
             valid = user.get().check_password(request.POST['password'])
 
     return JsonResponse({'valid': valid})
-
-
-def get_message(request):
-    # if this is a POST request we need to process the form data
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = MessageForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
-            return HttpResponseRedirect('/message received/')
-            
-    else:
-        form = MessageForm()
-
-    return render(request, 'messages.html', {'form': form})
