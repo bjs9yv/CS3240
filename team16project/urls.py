@@ -7,7 +7,6 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^', include('postman.urls')),
     url(r'^', include('django.contrib.auth.urls')),
     url(r'^$', 'securecontactapp.views.home', name='home'),
     url(r'^reports/$', 'securecontactapp.views.reports', name='reports'),
@@ -16,4 +15,5 @@ urlpatterns = patterns('',
     url(r'^account/$', 'securecontactapp.views.account', name='account'),
     url(r'^register/$', 'securecontactapp.views.registration', name='register'),
     url(r'^check_login/$', 'securecontactapp.views.check_login', name='check_login'),
+    url(r'^', include('postman.urls')),
 )
