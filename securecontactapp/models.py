@@ -18,3 +18,6 @@ class File(models.Model):
 class Message(models.Model):
     sender = models.ForeignKey(User, related_name='message_sender')
     recipient = models.ForeignKey(User, related_name='message_recipient')
+    body = models.TextField()
+    timestamp = models.TimeField(auto_now_add=True)
+    opened = models.BooleanField(default=False)
