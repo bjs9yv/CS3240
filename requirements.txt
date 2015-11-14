@@ -10,4 +10,4 @@ pycrypto==2.6.1
 static3==0.6.1
 virtualenv==13.1.2
 whitenoise==2.0.4
-django-postman-3.3.1
+django-postman==3.3.1
