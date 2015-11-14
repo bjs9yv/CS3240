@@ -47,10 +47,10 @@ class MultiFileField(forms.FileField):
 
 class MessageForm(forms.Form):
     message_recipient = forms.CharField(max_length=30)
-    message_body = forms.TextField(label='Type your message here')
+    message_body = forms.CharField(widget=forms.Textarea, label='Type your message here')
     
 class ReportForm(forms.Form):
-    report_body = forms.TextField(label='Type your report here')
+    report_body = forms.CharField(widget=forms.Textarea, label='Type your report here')
     files = MultiFileField()
 
 class FolderForm(forms.Form):
