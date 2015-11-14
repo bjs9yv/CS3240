@@ -17,19 +17,19 @@ def home(request):
 
 @login_required()
 def reports(request):
-    return TemplateResponse(request, 'reports.html')
+    return render(request, 'reports.html')
 
 @login_required()
 def messages(request):
-    return TemplateResponse(request, 'messages.html')
+    return render(request, 'messages.html')
 
 @login_required()
 def groups(request):
-    return TemplateResponse(request, 'reports.html')
+    return render(request, 'reports.html')
 
 @login_required()
 def account(request):
-    return TemplateResponse(request, 'account.html')
+    return render(request, 'account.html')
 
 @sensitive_post_parameters('username', 'password1', 'password2')
 @csrf_protect
