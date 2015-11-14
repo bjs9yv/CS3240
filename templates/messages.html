@@ -2,11 +2,9 @@
 
 {% block title %}{{ title }}{% endblock %}
 
-{% load search_tags %}
 {% block content %}
 
 <p> direct messaging system </p>
-{% search userlist username first_name last_name %}
 
 <form action="/your-name/" method="post">
     {% csrf_token %}
