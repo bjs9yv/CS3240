@@ -46,7 +46,7 @@ class MultiFileField(forms.FileField):
                 raise ValidationError(self.error_messages['file_size'] % { 'uploaded_file_name': uploaded_file.name})
 
 class MessageForm(forms.Form):
-    message_recipient = forms.CharField(max_length=30)
+    message_recipient = forms.CharField(label='Send to: ', max_length=30)
     message_body = forms.CharField(widget=forms.Textarea, label='Type your message here')
     
 class ReportForm(forms.Form):

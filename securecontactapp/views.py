@@ -73,5 +73,8 @@ def get_message(request):
             # ...
             # redirect to a new URL:
             return HttpResponseRedirect('/message received/')
+            
+    else:
+        form = MessageForm()
 
     return render(request, 'messages.html', {'form': form})

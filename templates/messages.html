@@ -6,7 +6,7 @@
 
 <p> direct messaging system </p>
 
-<form action="/your-name/" method="post">
+<form name="form" action="" method="post">
     {% csrf_token %}
     {{ form.message_body }}
     <input type="submit" value="Submit" />
