@@ -19,6 +19,18 @@ def home(request):
 def reports(request):
     return TemplateResponse(request, 'reports.html')
 
+@login_required()
+def messages(request):
+    return TemplateResponse(request, 'messages.html')
+
+@login_required()
+def groups(request):
+    return TemplateResponse(request, 'reports.html')
+
+@login_required()
+def account(request):
+    return TemplateResponse(request, 'account.html')
+
 @sensitive_post_parameters('username', 'password1', 'password2')
 @csrf_protect
 @never_cache
