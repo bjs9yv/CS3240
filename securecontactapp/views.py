@@ -43,9 +43,14 @@ def messages(request):
         form = MessageForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
+            # extract data from form.cleaned_data 
+            _to = form.cleaned_data['message_recipient']
+            _from = request.user
+            message = form.cleaned_data['message_body']
+            # TODO: make a message object and put into db
+            # ... 
+            
+            # redirect to same page
             return HttpResponseRedirect('')
             
     else:
