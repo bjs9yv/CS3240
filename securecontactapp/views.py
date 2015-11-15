@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.template.response import TemplateResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
 
 from .forms import MessageForm, ReportForm
 
@@ -49,7 +50,7 @@ def messages(request):
             message = form.cleaned_data['message_body']
             # TODO: make a message object and put into db
             # ... 
-            
+            return HttpResponse(message)
             # redirect to same page
             return HttpResponseRedirect('')
             
