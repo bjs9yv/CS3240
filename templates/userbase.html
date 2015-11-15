@@ -11,44 +11,40 @@
     <div id="banner" style='background: #F95252; height: '150px';'>
       <img src="/static/securecontactapp/SecureContact.png">
     </div>
-    
+  
     <div class="flex-container">
-      <div class="flex-item"><span class="nav-tab">
-	  <b>
-	    <a href="{% url 'home' %}">HOME</a>
-	  </b>
-	</span>
-      </div>
-      
-      <div class="flex-item"><span class="nav-tab">
-	  <b>
-	    <a href="{% url 'reports' %}">REPORTS</a>
-	  </b>
-	</span>
-      </div>
-      
-      <a href="{% url 'messages' %}">
-      <div class="flex-item"><span class="nav-tab">
-	  <b>
-	    MESSAGES
-	  </b>
-	</span>
-</div></a>
     
-      <div class="flex-item"><span class="nav-tab">
-	  <b>
-	    <a href="{% url 'groups' %}">GROUPS</a>
-	  </b>
-	</span>
+    <a href="{% url 'home' %}">
+      <div class="flex-item">
+        <span class="nav-tab"><b>HOME</b></span>
       </div>
+    </a>
+      
+    <a href="{% url 'reports' %}">
+      <div class="flex-item">
+        <span class="nav-tab"><b>REPORTS</b></span>
+      </div>
+    </a>
+      
+    <a href="{% url 'messages' %}">
+      <div class="flex-item">
+        <span class="nav-tab"><b>MESSAGES</b></span>
+      </div>  
+    </a>
+    
+    <a href="{% url 'groups' %}">
+      <div class="flex-item">
+        <span class="nav-tab"><b>GROUPS</b></span>
+      </div>
+    </a>
 
-      <div class="flex-item"><span class="nav-tab">
-	  <b>
-	    <a href="{% url 'account' %}">ACCOUNT</a>
-	  </b>
-	</span>
+    <a href="{% url 'account' %}">
+      <div class="flex-item">
+        <span class="nav-tab"><b>ACCOUNT</b></span>
       </div>
-   </div>
+    </a>
+
+   </div>   
     
    <br><br><br>
    
