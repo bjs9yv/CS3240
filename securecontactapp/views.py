@@ -10,7 +10,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.template.response import TemplateResponse
 from django.core.exceptions import ObjectDoesNotExist
 
-from .forms import MessageForm
+from .forms import MessageForm, ReportForm
 
 @login_required()
 def home(request):
