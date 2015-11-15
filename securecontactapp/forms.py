@@ -18,7 +18,7 @@ class MultiFileField(forms.FileField):
         'max_num': u"Ensure at most %(max_num)s files are uploaded (received %(num_files)s).",
         'file_size' : u"File: %(uploaded_file_name)s, exceeded maximum upload size."
     }
-
+    
     def __init__(self, *args, **kwargs):
         self.min_num = kwargs.pop('min_num', 0)
         self.max_num = kwargs.pop('max_num', None)
