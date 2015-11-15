@@ -31,7 +31,7 @@ def messages(request):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
-            return HttpResponseRedirect('/message received/')
+            return HttpResponseRedirect('messages/')
             
     else:
         form = MessageForm()
