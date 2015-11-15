@@ -45,7 +45,7 @@ def messages(request):
         if form.is_valid():
             # extract data from form.cleaned_data 
             _to = form.cleaned_data['message_recipient']
-            _from = request.username 
+            _from = request.user
             message = form.cleaned_data['message_body']
             # TODO: make a message object and put into db
             # ... 
