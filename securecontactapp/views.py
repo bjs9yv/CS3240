@@ -55,7 +55,7 @@ def messages(request):
                 recipient = _from
                 body = message
                 message = Message.create(sender,recipient,body)
-                message.save() # NOT WORKING, "column "body" of relation "securecontactapp_message" does not exist"
+                # message.save() # NOT WORKING, "column "body" of relation "securecontactapp_message" does not exist"
                 return HttpResponse(message.body) # demo purposes only
 
             except User.DoesNotExist:
