@@ -13,23 +13,6 @@
     </div>
     
     <div class="flex-container">
-      <style>
-	/* unvisited link */
-	a:link {
-	color: white;
-	text-decoration: none;
-	}
-
-	/* visited link */
-	a:visited {
-	color: white;
-	}
-
-	/* mouse over link */
-	a:hover {
-	color: gray;
-	}
-      </style>
       <div class="flex-item"><span class="nav-tab">
 	  <b>
 	    <a href="{% url 'home' %}">HOME</a>
@@ -44,12 +27,13 @@
 	</span>
       </div>
       
+      <a href="{% url 'messages' %}">
       <div class="flex-item"><span class="nav-tab">
 	  <b>
-	    <a href="{% url 'messages' %}">MESSAGES</a>
+	    MESSAGES
 	  </b>
 	</span>
-      </div>
+</div></a>
     
       <div class="flex-item"><span class="nav-tab">
 	  <b>

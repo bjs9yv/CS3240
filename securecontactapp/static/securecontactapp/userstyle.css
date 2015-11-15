@@ -33,6 +33,10 @@ img {
   line-height: 15px;
 }
 
+.flex-item:hover {
+  background-color: #F72121;
+}
+
 .nav-tab {
   vertical-align: middle;
   text-align: center; 
