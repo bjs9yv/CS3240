@@ -12,6 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 
 from .forms import MessageForm, ReportForm
+from .models import Message
 
 @login_required()
 def home(request):
@@ -48,9 +49,18 @@ def messages(request):
             _to = form.cleaned_data['message_recipient']
             _from = request.user
             message = form.cleaned_data['message_body']
-            # TODO: make a message object and put into db
-            # ... 
-            return HttpResponse(message)
+            # username might not exist
+            try:
+                sender = User.objects.get(username=_to)
+                recipient = _from
+                body = message
+                message = Message.create(sender,recipient,body)
+                #message.save() # NOT WORKING, "column "body" of relation "securecontactapp_message" does not exist"
+                return HttpResponse(message.body) # demo purposes only
+
+            except User.DoesNotExist:
+                return HttpResponse('no such user')
+
             # redirect to same page
             return HttpResponseRedirect('')
             

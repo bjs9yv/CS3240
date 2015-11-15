@@ -31,3 +31,8 @@ class Message(models.Model):
     body = models.TextField()
     timestamp = models.TimeField(auto_now_add=True)
     opened = models.BooleanField(default=False)
+    
+    @classmethod
+    def create(cls, s, r, b):
+        message = Message(sender=s,recipient=r,body=b)
+        return message
