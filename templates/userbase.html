@@ -14,34 +14,24 @@
   
     <div class="flex-container">
     
-    <a href="{% url 'home' %}">
-      <div class="flex-item">
-        <span class="nav-tab"><b>HOME</b></span>
-      </div>
+    <a href="{% url 'home' %}" class="flex-item">
+      <span class="nav-tab"><b>HOME</b></span>
     </a>
       
-    <a href="{% url 'reports' %}">
-      <div class="flex-item">
-        <span class="nav-tab"><b>REPORTS</b></span>
-      </div>
+    <a href="{% url 'reports' %}" class="flex-item">
+      <span class="nav-tab"><b>REPORTS</b></span>
     </a>
       
-    <a href="{% url 'messages' %}">
-      <div class="flex-item">
-        <span class="nav-tab"><b>MESSAGES</b></span>
-      </div>  
+    <a href="{% url 'messages' %}" class="flex-item">
+      <span class="nav-tab"><b>MESSAGES</b></span>
     </a>
     
-    <a href="{% url 'groups' %}">
-      <div class="flex-item">
-        <span class="nav-tab"><b>GROUPS</b></span>
-      </div>
+    <a href="{% url 'groups' %}" class="flex-item">
+      <span class="nav-tab"><b>GROUPS</b></span>
     </a>
 
-    <a href="{% url 'account' %}">
-      <div class="flex-item">
-        <span class="nav-tab"><b>ACCOUNT</b></span>
-      </div>
+    <a href="{% url 'account' %}" class="flex-item">
+      <span class="nav-tab"><b>ACCOUNT</b></span>
     </a>
 
    </div>   
@@ -60,9 +50,7 @@
     
  </center>
     
-    <div id="content">
         {% block content %}{% endblock %}
-    </div>
     
 </body>
 <p><a href="{% url 'logout' %}">Gotta Go?</a></p>

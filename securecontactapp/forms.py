@@ -53,7 +53,7 @@ class MessageForm(forms.Form):
     
 class ReportForm(forms.Form):
     report_body = forms.CharField(widget=forms.Textarea, label='Type your report here')
-    files = MultiFileField()
+    report_files = MultiFileField()
 
 class FolderForm(forms.Form):
     pass

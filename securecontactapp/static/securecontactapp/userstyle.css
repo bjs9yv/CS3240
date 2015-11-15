@@ -31,6 +31,7 @@ img {
   -ms-flex: 1; /* IE 10 */
   flex: auto;
   line-height: 15px;
+  text-decoration: none;
 }
 
 .flex-item:hover {
