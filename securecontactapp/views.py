@@ -32,7 +32,9 @@ def reports(request):
     else:
         form = ReportForm()
 
-    return render(request, 'messages.html', {'form': form})
+        return render(request, 'reports.html', {'form': form})
+    
+    
 @login_required
 def messages(request):
     # if this is a POST request we need to process the form data
@@ -49,7 +51,7 @@ def messages(request):
     else:
         form = MessageForm()
 
-    return render(request, 'messages.html', {'form': form})
+        return render(request, 'messages.html', {'form': form})
     
 @login_required()
 def groups(request):
