@@ -26,7 +26,7 @@ def reports(request):
         form = ReportForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            # process the data in form.cleaned_data as required
+            # TODO: process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
             return HttpResponseRedirect('')
@@ -55,7 +55,9 @@ def messages(request):
                 recipient = _from
                 body = message
                 message = Message.create(sender,recipient,body)
+                # so close... 
                 # message.save() # NOT WORKING, "column "body" of relation "securecontactapp_message" does not exist"
+                # check out http://stackoverflow.com/questions/4687275/django-databaseerror-column-does-not-exist
                 return HttpResponse(message.body) # demo purposes only
 
             except User.DoesNotExist:
@@ -66,7 +68,6 @@ def messages(request):
             
     else:
         form = MessageForm()
-
         return render(request, 'messages.html', {'form': form})
     
 @login_required()
