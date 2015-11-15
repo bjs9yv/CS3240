@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
+# From http://koensblog.eu/blog/7/multiple-file-upload-django/
 class MultiFileInput(forms.FileInput):
     def render(self, name, value, attrs={}):
         attrs['multiple'] = 'multiple'
@@ -10,7 +11,8 @@ class MultiFileInput(forms.FileInput):
             return files.getlist(name)
         else:
             return [files.get(name)]
- 
+
+# From http://koensblog.eu/blog/7/multiple-file-upload-django/
 class MultiFileField(forms.FileField):
     widget = MultiFileInput
     default_error_messages = {
@@ -51,7 +53,7 @@ class MessageForm(forms.Form):
     
 class ReportForm(forms.Form):
     report_body = forms.CharField(widget=forms.Textarea, label='Type your report here')
-    files = MultiFileField()
+    report_files = MultiFileField()
 
 class FolderForm(forms.Form):
     pass

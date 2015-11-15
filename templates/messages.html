@@ -1,36 +1,13 @@
-<style>
-
-#messagebox {
-  width: 600px;
-  height: 30px;
-  background-color: #F95252;
-  padding: 5px;
-}
-
-#outer {
-  border-style: solid;
-  border-color: black;
-  border-width: 3px;
-}
-
-</style>
-
 {% extends "userbase.html" %}
-
-{% block title %}{{ title }}{% endblock %}
-
-<div id="outer">
-  <div id="messagebox">  Send a message</div>
 
 {% block content %}
 
 <h2>Send a message</h2>
 <form action="" method="POST">
     {% csrf_token %}
-    <br><p><h2> {{ form.message_recipient }} </h2>
-    <br><p> {{ form.message_body }}
-    <br><br><input type="submit" value="Submit" />
+    <p><h2> {{ form.message_recipient }} </h2>
+    <p> {{ form.message_body }}
+    <input type="submit" value="Submit" />
 </form>
 
 {% endblock %}
-</div>
