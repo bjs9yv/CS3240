@@ -51,8 +51,8 @@ def messages(request):
             # ... 
             
             # redirect to same page
-            #return HttpResponseRedirect('')
-            return HttpResponse(message)
+            return HttpResponseRedirect('')
+            
     else:
         form = MessageForm()
 
