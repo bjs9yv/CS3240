@@ -11,5 +11,18 @@
     <br> {{ form.message_body }} </p>
     <p><input type="submit" value="Submit" /> </p>
 </form>
+<h2>My messages</h2>
+<table>
+    <tr>
+        <th>From</th>
+        <th>Body</th>
+    </tr>
+    {% for message in messages %}
+    <tr>
+        <td>{{ message.sender }}</td>
+        <td>{{ message.body }}</td>
+    </tr>
+    {% endfor %}
+</table>
 
 {% endblock %}

@@ -59,7 +59,8 @@ def messages(request):
             
     else:
         form = MessageForm()
-        return render(request, 'messages.html', {'form': form})
+        messages = Message.objects.filter(recipient=request.user, opened=False)
+        return render(request, 'messages.html', {'form': form, 'messages': messages})
     
 @login_required()
 def groups(request):
