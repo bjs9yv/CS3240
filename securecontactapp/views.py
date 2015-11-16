@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 
 from .forms import MessageForm, ReportForm
-from .models import Message, Report
+from .models import Message, Report, File
 
 @login_required()
 def home(request):
@@ -30,6 +30,9 @@ def reports(request):
             text = form.cleaned_data['report_body']
             r = Report(owner=request.user, text=text)
             r.save()
+            for fn in request.FILES:
+                f = File(file=request.FILES[fn], attached_to=r)
+                f.save()
             # redirect to a new URL:
             return HttpResponseRedirect('')
         else:
