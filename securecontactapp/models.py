@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class Report(models.Model):
     owner = models.ForeignKey(User)
     folder = models.ForeignKey('Folder')
-    private = models.BooleanField()
+    private = models.BooleanField(default=False)
     text = models.TextField()
     timestamp = models.TimeField(auto_now_add=True)
 
@@ -20,7 +20,7 @@ def report_filename(instance, filename):
 # Uploaded files attached to Reports
 class File(models.Model):
     attached_to = models.ForeignKey('Report')
-    encrypted = models.BooleanField()
+    encrypted = models.BooleanField(default=False)
     file = models.FileField(upload_to=report_filename)
     timestamp = models.TimeField(auto_now_add=True)
 

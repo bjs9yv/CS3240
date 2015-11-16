@@ -46,25 +46,16 @@ def messages(request):
         # check whether it's valid:
         if form.is_valid():
             # extract data from form.cleaned_data 
-            _to = form.cleaned_data['message_recipient']
-            _from = request.user
-            message = form.cleaned_data['message_body']
-            # username might not exist
-            try:
-                sender = User.objects.get(username=_to)
-                recipient = _from
-                body = message
-                message = Message.create(sender,recipient,body)
-                # so close... 
-                # message.save() # NOT WORKING, "column "body" of relation "securecontactapp_message" does not exist"
-                # check out http://stackoverflow.com/questions/4687275/django-databaseerror-column-does-not-exist
-                return HttpResponse(message.body) # demo purposes only
-
-            except User.DoesNotExist:
-                return HttpResponse('no such user')
-
-            # redirect to same page
-            return HttpResponseRedirect('')
+            to = form.cleaned_data['message_recipient']
+            sender = request.user
+            body = form.cleaned_data['message_body']
+            # recipient username might not exist
+            user = User.objects.filter(username=to)
+            if user.exists():
+                m = Message(sender=sender, recipient=user.get(), body=body)
+                m.save()
+        # redirect to same page
+        return HttpResponseRedirect('')
             
     else:
         form = MessageForm()
