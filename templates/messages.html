@@ -5,9 +5,11 @@
 <h2>Send a message</h2>
 <form action="" method="POST">
     {% csrf_token %}
-    <p><h2> {{ form.message_recipient }} </h2>
-    <p> {{ form.message_body }}
-    <p><input type="submit" value="Submit" />
+    <p> {{form.message_recipient.label }}
+    <br> {{ form.message_recipient }} </p>
+    <p> {{form.message_body.label }}
+    <br> {{ form.message_body }} </p>
+    <p><input type="submit" value="Submit" /> </p>
 </form>
 
 {% endblock %}
