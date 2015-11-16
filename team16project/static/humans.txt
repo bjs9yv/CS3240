@@ -5,7 +5,7 @@
 
     Arch Pixelator: Matt Kauper
 
-    Pleb: Brian Schwartz
+    SWIM: Brian Schwartz
 
 /* THANKS */
 
