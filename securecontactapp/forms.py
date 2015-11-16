@@ -1,5 +1,6 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 
 # From http://koensblog.eu/blog/7/multiple-file-upload-django/
 class MultiFileInput(forms.FileInput):
@@ -40,12 +41,13 @@ class MultiFileField(forms.FileField):
             num_files = 0
         if num_files < self.min_num:
             raise ValidationError(self.error_messages['min_num'] % {'min_num': self.min_num, 'num_files': num_files})
-            return
         elif self.max_num and  num_files > self.max_num:
             raise ValidationError(self.error_messages['max_num'] % {'max_num': self.max_num, 'num_files': num_files})
         for uploaded_file in data:
-            if uploaded_file.size > self.maximum_file_size:
+            if self.maximum_file_size != None and uploaded_file.size > self.maximum_file_size:
                 raise ValidationError(self.error_messages['file_size'] % { 'uploaded_file_name': uploaded_file.name})
+
+        return True
 
 class MessageForm(forms.Form):
     message_recipient = forms.CharField(label='Send to', max_length=30)
