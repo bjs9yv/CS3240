@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 # User-submitted Reports
 class Report(models.Model):
     owner = models.ForeignKey(User)
-    folder = models.ForeignKey('Folder')
+    folder = models.ForeignKey('Folder', blank=True, null=True)
     private = models.BooleanField(default=False)
     text = models.TextField()
     timestamp = models.TimeField(auto_now_add=True)

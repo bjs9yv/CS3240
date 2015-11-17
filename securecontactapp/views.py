@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from django.db.models.signals import post_save
 
 from .forms import MessageForm, ReportForm
-from .models import Message
+from .models import Message, Report, File
 
 @login_required()
 def home(request):
@@ -24,13 +24,20 @@ def reports(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = ReportForm(request.POST)
+        form = ReportForm(request.POST, request.FILES)
         # check whether it's valid:
         if form.is_valid():
             # TODO: process the data in form.cleaned_data as required
-            # ...
+            text = form.cleaned_data['report_body']
+            r = Report(owner=request.user, text=text)
+            r.save()
+            for fn in request.FILES:
+                f = File(file=request.FILES[fn], attached_to=r)
+                f.save()
             # redirect to a new URL:
             return HttpResponseRedirect('')
+        else:
+            return HttpResponse('nope')
             
     else:
         form = ReportForm()
