@@ -10,6 +10,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.template.response import TemplateResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
+from django.db.models.signals import post_save
 
 from .forms import MessageForm, ReportForm
 from .models import Message
