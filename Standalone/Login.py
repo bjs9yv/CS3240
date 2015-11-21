@@ -1,9 +1,11 @@
 __author__ = 'adminuser'
 from Crypto.PublicKey import RSA
+import KeyCheck
 import os
 import getpass
 import requests
 import re
+from Crypto import Random
 
 print("*********************************************************************************")
 print("**                                                                             **")
@@ -45,7 +47,7 @@ while True:
 # POST LOGIN PROCEDURE
 if "PrivateKey.txt" not in os.listdir(os.getcwd()): # TODO change this to search sub directory where keys are stored
     print("** It looks like this is your first time! Generating key pair...\n")
-    RSA.gen_keys()
+    KeyCheck.gen_keys()
     print("** Successfully created public/private key pair...\n")
     # TODO: upload PublicKey.txt to db
     # print("** Uploading public key to SecureContact site...\n")
@@ -86,9 +88,34 @@ while True:
                 root_check = True
                 break
         if not root_check:
-            print("\nThe file requested is outside of the current working directory.")
-            file_path = input("Please specifiy the file path: ")
-            #Search os for file if don't know path...
+            print("\nThe requested file is not within the current working directory.")
+            file_path = input("Please specifiy the file path or enter 'Unknown': ")
+            if file_path == 'Unknown':
+                check = False
+                multiple = False
+                file_paths = []
+                for root, dirs, files in os.walk('/home'):
+                    for f in files:
+                        if f == file_name:
+                            file_path = root + '/'
+                            file_paths.append(file_path)
+                            if not check:
+                                check = True
+                            else:
+                                multiple = True
+                if multiple:
+                    print("Multiple files were found with the given filename [" + file_name + "]:")
+                    cntr = 1
+                    file_dict = {}
+                    for f in file_paths:
+                        print("\t" + str(cntr) + ": " + f + file_name)
+                        cntr += 1
+                        file_dict[cntr] = f
+                    file_choice = input("Choice the file to upload: ")
+                    for f in file_dict:
+                        if str(f) == file_choice or file_dict[f] + file_name == file_choice:
+                            file_path = file_dict[f]
+                            break
         try:
             f = open(file_path + file_name, "rb")
             file_contents = f.read()
