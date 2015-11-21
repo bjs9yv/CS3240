@@ -15,6 +15,8 @@ from django.db.models.signals import post_save
 from .forms import MessageForm, ReportForm
 from .models import Message, Report, File
 
+import os
+
 @login_required()
 def home(request):
     return render(request, 'home.html')
