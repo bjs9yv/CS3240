@@ -111,17 +111,5 @@ def check_login(request):
 
 @login_required
 def humans(request):
-    """
-    path = ""
-    found = False
-    for root, dirs, files in os.walk('/app'):
-        for f in files:
-            if f == 'humans.txt':
-                path = root + '/'
-                found = True
-                break
-        if found:
-            break
-    """
     with open('/app/team16project/static/humans.txt', 'r') as f:
         return HttpResponse(f.read())
