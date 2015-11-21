@@ -106,3 +106,7 @@ def check_login(request):
             valid = user.get().check_password(request.POST['password'])
 
     return JsonResponse({'valid': valid})
+
+def humans(request):
+    with open(os.getcwd() + 'team16project/static/humans.txt', 'r') as f:
+        return HttpResponse(f.read())
