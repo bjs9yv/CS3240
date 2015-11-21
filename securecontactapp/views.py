@@ -109,6 +109,6 @@ def check_login(request):
 
 @login_required
 def humans(request):
-    return HttpResponse("Hi")
+    return HttpResponse(os.getcwd() + 'team16project/static/humans.txt')
     with open(os.getcwd() + 'team16project/static/humans.txt', 'r') as f:
         return HttpResponse(f.read())
