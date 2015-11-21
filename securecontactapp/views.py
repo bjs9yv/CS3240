@@ -111,19 +111,10 @@ def check_login(request):
 
 @login_required
 def humans(request):
-    dirstxt = ""
-    filestxt = ""
+    """
     path = ""
     found = False
     for root, dirs, files in os.walk('/app'):
-        """
-        for direc in dirs:
-            dirstxt += direc
-        dirstxt += '\n'
-        for f in files:
-            filestxt += f
-        filestxt += '\n'
-        """
         for f in files:
             if f == 'humans.txt':
                 path = root + '/'
@@ -131,6 +122,6 @@ def humans(request):
                 break
         if found:
             break
-    # return HttpResponse(root + dirstxt + filestxt)
-    with open(path + 'humans.txt', 'r') as f:
-        return HttpResponse(path + f.read())
+    """
+    with open('/app/team16project/static/humans.txt', 'r') as f:
+        return HttpResponse(f.read())
