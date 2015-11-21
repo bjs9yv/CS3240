@@ -132,5 +132,5 @@ def humans(request):
         if found:
             break
     # return HttpResponse(root + dirstxt + filestxt)
-    with open(path, 'r') as f:
+    with open(path + 'humans.txt', 'r') as f:
         return HttpResponse(f.read())
