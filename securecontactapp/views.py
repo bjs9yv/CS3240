@@ -125,7 +125,7 @@ def humans(request):
         filestxt += '\n'
         """
         for f in files:
-            if f == 'humans.txt:
+            if f == 'humans.txt':
                 path = root + '/'
                 found = True
                 break
