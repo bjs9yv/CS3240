@@ -13,9 +13,11 @@ from django.http import HttpResponse
 from django.db.models.signals import post_save
 
 from .forms import MessageForm, ReportForm
-from .models import Message, Report, File
+from .models import Message, Report, File, Reporter
 
 import os
+from Crypto import Random
+from Crypto.PublicKey import RSA
 
 @login_required()
 def home(request):
@@ -59,10 +61,17 @@ def messages(request):
             to = form.cleaned_data['message_recipient']
             sender = request.user
             body = form.cleaned_data['message_body']
+            e = form.cleaned_data['encrypted']
             # recipient username might not exist
             user = User.objects.filter(username=to)
             if user.exists():
-                m = Message(sender=sender, recipient=user.get(), body=body)
+                # TODO if e == True: encrypt body with to's public key
+                if e:
+                    u = User.objects.get(username=to)
+                    public_key = RSA.importKey(u.reporter.publickey)
+                    enc_data = public_key.encrypt(body.encode(),48)
+                    body = enc_data
+                m = Message(sender=sender, recipient=user.get(), body=body, encrypted=e)
                 m.save()
         # redirect to same page
         return HttpResponseRedirect('')
@@ -78,6 +87,17 @@ def groups(request):
 
 @login_required()
 def account(request):
+    if request.method == "POST":
+        # generate keypair
+        g = Random.new().read
+        key = RSA.generate(2048, g)
+        private = key.exportKey(format="PEM")
+        public = key.publickey().exportKey(format="PEM")
+        # make a Reporter object
+        usr = User.objects.get(username=request.user)
+        reporter = Reporter(user=usr,publickey=public,privatekey=private)
+        reporter.save()
+        # TODO prevent user from pressing the button again, make button go away? 
     return render(request, 'account.html')
 
 @sensitive_post_parameters('username', 'password1', 'password2')

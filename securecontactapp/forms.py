@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.forms import widgets
 
 # From http://koensblog.eu/blog/7/multiple-file-upload-django/
 class MultiFileInput(forms.FileInput):
@@ -52,7 +53,8 @@ class MultiFileField(forms.FileField):
 class MessageForm(forms.Form):
     message_recipient = forms.CharField(label='Send to', max_length=30)
     message_body = forms.CharField(widget=forms.Textarea, label='Type your message here')
-    
+    encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypt this message?')
+
 class ReportForm(forms.Form):
     report_body = forms.CharField(widget=forms.Textarea, label='Type your report here')
     report_files = MultiFileField()

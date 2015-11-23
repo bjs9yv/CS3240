@@ -5,6 +5,14 @@
 {% block content %}
 
 <p> your account info and settings </p>
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <p>Generate Keypair <input type="submit" value="Genkeys"/></p>
+</form>
+
+
 <p><a href="/password_change">Change your password</a></p>
+
 
 {% endblock %}
