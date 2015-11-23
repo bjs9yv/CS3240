@@ -10,10 +10,7 @@
     <p> {{form.message_body.label }}
     <br> {{ form.message_body }} </p>
     <p> {{form.encrypted.label}} {{form.encrypted }} </p>
-    <p><input type="submit" value="Submit" /> </p>
-</form>
-<form action="" method="GET">
-    {% csrf_token %}
+    <p><input type="submit" value="Submit" name="message" /> </p>
 <h2>My messages</h2>
 <table>
     <tr>

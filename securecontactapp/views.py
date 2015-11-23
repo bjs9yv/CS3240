@@ -55,38 +55,40 @@ def messages(request):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = MessageForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-            # extract data from form.cleaned_data 
-            to = form.cleaned_data['message_recipient']
-            sender = request.user
-            body = form.cleaned_data['message_body']
-            e = form.cleaned_data['encrypted']
-            # recipient username might not exist
-            user = User.objects.filter(username=to)
-            if user.exists():
-                if e:
-                    u = User.objects.get(username=to)
-                    public_key = RSA.importKey(u.reporter.publickey)
-                    enc_data = public_key.encrypt(body.encode(),48)
-                    body = enc_data
-                m = Message(sender=sender, recipient=user.get(), body=body, encrypted=e)
-                m.save()
-        # redirect to same page
-        return HttpResponseRedirect('')
-    else:
-        form = MessageForm()
-        if 'delete' in request.GET: 
-            for d in request.GET['del']: # doesnt work with id > 9 with more than 1 selected
-                pass
-                # m = Message.objects.get(id=d) 
-                # m.delete()
-        if 'decrypt' in request.GET:
+        if 'message' in request.POST:
+            
+            # check whether it's valid:
+            if form.is_valid():
+                # extract data from form.cleaned_data 
+                to = form.cleaned_data['message_recipient']
+                sender = request.user
+                body = form.cleaned_data['message_body']
+                e = form.cleaned_data['encrypted']
+                # recipient username might not exist
+                user = User.objects.filter(username=to)
+                if user.exists():
+                    if e:
+                        u = User.objects.get(username=to)
+                        public_key = RSA.importKey(u.reporter.publickey)
+                        enc_data = public_key.encrypt(body.encode(),48)
+                        body = enc_data
+                    m = Message(sender=sender, recipient=user.get(), body=body, encrypted=e)
+                    m.save()
+            # redirect to same page
+            return HttpResponseRedirect('')
+        elif 'delete' in request.POST: 
+            for d in request.POST.getlist('del'): 
+                m = Message.objects.get(id=d) 
+                m.delete()
+        elif 'decrypt' in request.POST:
             u = User.objects.get(username=request.user)
             private_key = RSA.importKey(u.reporter.privatekey)
             #m = Message.objects.get(id=ID FROM REQUEST CHECKBOX)
-        messages = Message.objects.filter(recipient=request.user)
-        return render(request, 'messages.html', {'form': form, 'messages': messages})
+    else:
+        form = MessageForm()
+
+    messages = Message.objects.filter(recipient=request.user)
+    return render(request, 'messages.html', {'form': form, 'messages': messages})
     
 @login_required()
 def groups(request):
