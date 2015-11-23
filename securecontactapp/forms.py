@@ -53,7 +53,7 @@ class MultiFileField(forms.FileField):
 class MessageForm(forms.Form):
     message_recipient = forms.CharField(label='Send to', max_length=30)
     message_body = forms.CharField(widget=forms.Textarea, label='Type your message here')
-    encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypt this message?')
+    encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypt this message?', required=False)
 
 class ReportForm(forms.Form):
     report_body = forms.CharField(widget=forms.Textarea, label='Type your report here')
