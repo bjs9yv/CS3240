@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     url(r'^register/$', 'securecontactapp.views.registration', name='register'),
     url(r'^check_login/$', 'securecontactapp.views.check_login', name='check_login'),
     url(r'^humans/$', 'securecontactapp.views.humans', name='humans'),
+    url(r'^site_manager/$', 'securecontactapp.views.site_manager', name='site_manager'),
 )

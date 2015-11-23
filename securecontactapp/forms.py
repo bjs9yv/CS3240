@@ -61,3 +61,6 @@ class ReportForm(forms.Form):
 
 class FolderForm(forms.Form):
     pass
+
+class SiteManagerForm(forms.Form):
+    username = forms.CharField(label='Username')
