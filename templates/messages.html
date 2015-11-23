@@ -12,18 +12,27 @@
     <p> {{form.encrypted.label}} {{form.encrypted }} </p>
     <p><input type="submit" value="Submit" /> </p>
 </form>
+<form action="" method="GET">
+    {% csrf_token %}
 <h2>My messages</h2>
 <table>
     <tr>
+        <th>Select</th>
         <th>From</th>
         <th>Body</th>
+
     </tr>
     {% for message in messages %}
     <tr>
+        <td><input type="checkbox" name="del" value="{{ message.id }}"/></td>
         <td>{{ message.sender }}</td>
         <td>{{ message.body }}</td>
+	
     </tr>
     {% endfor %}
+    <input type="submit" name="delete" value="Delete"/>
+    <input type="submit" name="decrypt" value="Decrypt Selected"/>
 </table>
+</form>
 
 {% endblock %}

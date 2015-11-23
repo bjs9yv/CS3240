@@ -65,7 +65,6 @@ def messages(request):
             # recipient username might not exist
             user = User.objects.filter(username=to)
             if user.exists():
-                # TODO if e == True: encrypt body with to's public key
                 if e:
                     u = User.objects.get(username=to)
                     public_key = RSA.importKey(u.reporter.publickey)
@@ -75,10 +74,18 @@ def messages(request):
                 m.save()
         # redirect to same page
         return HttpResponseRedirect('')
-            
     else:
         form = MessageForm()
-        messages = Message.objects.filter(recipient=request.user, opened=False)
+        if 'delete' in request.GET: 
+            for d in request.GET['del']: # doesnt work with id > 9 with more than 1 selected
+                pass
+                # m = Message.objects.get(id=d) 
+                # m.delete()
+        if 'decrypt' in request.GET:
+            u = User.objects.get(username=request.user)
+            private_key = RSA.importKey(u.reporter.privatekey)
+            #m = Message.objects.get(id=ID FROM REQUEST CHECKBOX)
+        messages = Message.objects.filter(recipient=request.user)
         return render(request, 'messages.html', {'form': form, 'messages': messages})
     
 @login_required()
