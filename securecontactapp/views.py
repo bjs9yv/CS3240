@@ -4,15 +4,15 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User, Group
 from django.contrib.auth.forms import UserCreationForm
 from django.template.response import TemplateResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.db.models.signals import post_save
 
-from .forms import MessageForm, ReportForm
+from .forms import MessageForm, ReportForm, SiteManagerForm
 from .models import Message, Report, File, Reporter
 
 import os
@@ -140,3 +140,35 @@ def check_login(request):
 def humans(request):
     with open('/app/team16project/static/humans.txt', 'r') as f:
         return HttpResponse(f.read())
+
+def user_is_site_manager(user):
+    return user.groups.filter(name='Site Manager').exists()
+
+@user_passes_test(user_is_site_manager)
+@csrf_protect
+def site_manager(request):
+    if request.method == 'POST':
+        form = SiteManagerForm(data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            user = User.objects.filter(username=username)
+            siteManager = Group.objects.get(name='Site Manager')
+            if user.exists():
+                user = user.get()
+                if 'promote' in request.POST:
+                    user.groups.add(siteManager)
+                elif 'demote' in request.POST:
+                    user.groups.remove(siteManager)
+                elif 'suspend_access' in request.POST:
+                    user.is_active = False
+                elif 'resume_access' in request.POST:
+                    user.is_active = True
+                elif 'suspend_reporter' in request.POST:
+                    user.user_permissions.remove('securecontactapp.add_report')
+                elif 'resume_reporter' in request.POST:
+                    user.user_permissions.add('securecontactapp.add_report')
+                user.save()
+    else:
+        form = SiteManagerForm()
+    context = {'form': form}
+    return render(request, 'sitemanager.html', context)

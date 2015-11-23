@@ -1,0 +1,25 @@
+{% extends "userbase.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<p><h2> site manager console </h2></p>
+
+<form action="" method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <p>
+  <input type="submit" name="promote" value="Make site manager"/>
+  <input type="submit" name="demote" value="Remove site manager status"/>
+  </p><p>
+  <input type="submit" name="suspend_access" value="Suspend site access"/>
+  <input type="submit" name="resume_access" value="Resume site access"/>
+  </p><p>
+  <input type="submit" name="suspend_reporter" value="Suspend reporter priveleges"/>
+  <input type="submit" name="resume_reporter" value="Resume reporter priveleges"/>
+  </p>
+</form>
+
+
+{% endblock %}
