@@ -101,6 +101,13 @@ def groups(request):
 
 @login_required()
 def account(request):
+    usr = User.objects.get(username=request.user)
+    # TODO: this is shitty, why not just generate keypair upon registration
+    try:
+        Reporter.objects.get(user=usr)
+        return render(request, 'account_haskeys.html')
+    except ObjectDoesNotExist:
+        pass
     if request.method == "POST":
         # generate keypair
         g = Random.new().read
@@ -108,10 +115,9 @@ def account(request):
         private = key.exportKey(format="PEM")
         public = key.publickey().exportKey(format="PEM")
         # make a Reporter object
-        usr = User.objects.get(username=request.user)
         reporter = Reporter(user=usr,publickey=public,privatekey=private)
         reporter.save()
-        # TODO prevent user from pressing the button again, make button go away? 
+        return render(request, 'account_haskeys.html')
     return render(request, 'account.html')
 
 @sensitive_post_parameters('username', 'password1', 'password2')
