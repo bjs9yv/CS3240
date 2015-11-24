@@ -16,8 +16,10 @@ from .forms import MessageForm, ReportForm, SiteManagerForm
 from .models import Message, Report, File, Reporter
 
 import os
+from base64 import b64encode, b64decode
 from Crypto import Random
 from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
 
 @login_required()
 def home(request):
@@ -70,7 +72,8 @@ def messages(request):
                     if e:
                         u = User.objects.get(username=to)
                         public_key = RSA.importKey(u.reporter.publickey)
-                        enc_data = public_key.encrypt(body.encode(),48) # TODO: fix me plz
+                        cipher = PKCS1_OAEP.new(public_key)
+                        enc_data = b64encode(cipher.encrypt(body.encode('UTF-8')))
                         body = enc_data
                     m = Message(sender=sender, recipient=user.get(), body=body, encrypted=e)
                     m.save()
@@ -86,8 +89,13 @@ def messages(request):
             u = User.objects.get(username=request.user)
             private_key = RSA.importKey(u.reporter.privatekey)
             for d in request.POST.getlist('del'): 
+                cipher = PKCS1_OAEP.new(private_key)
                 m = Message.objects.get(id=d)
-                m.body = private_key.decrypt(m.body).decode(encoding='UTF-8') # TODO: fix me plz
+                try:
+                    m.body = cipher.decrypt(b64decode(m.body)).decode(encoding='UTF-8')
+                except:
+                    # if invalid ciphertext blob
+                    continue
                 m.save()
     else:
         form = MessageForm()
