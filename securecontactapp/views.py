@@ -101,23 +101,6 @@ def groups(request):
 
 @login_required()
 def account(request):
-    usr = User.objects.get(username=request.user)
-    # TODO: this is shitty, why not just generate keypair upon registration
-    try:
-        Reporter.objects.get(user=usr)
-        return render(request, 'account_haskeys.html')
-    except ObjectDoesNotExist:
-        pass
-    if request.method == "POST":
-        # generate keypair
-        g = Random.new().read
-        key = RSA.generate(2048, g)
-        private = key.exportKey(format="PEM")
-        public = key.publickey().exportKey(format="PEM")
-        # make a Reporter object
-        reporter = Reporter(user=usr,publickey=public,privatekey=private)
-        reporter.save()
-        return render(request, 'account_haskeys.html')
     return render(request, 'account.html')
 
 @sensitive_post_parameters('username', 'password1', 'password2')
@@ -128,6 +111,14 @@ def registration(request):
         form = UserCreationForm(data=request.POST)
         if form.is_valid():
             form.save()
+            usr = User.objects.get(username=request.POST['username'])
+            g = Random.new().read
+            key = RSA.generate(2048, g)
+            private = key.exportKey(format="PEM")
+            public = key.publickey().exportKey(format="PEM")
+            # make a Reporter object
+            reporter = Reporter(user=usr,publickey=public,privatekey=private)
+            reporter.save()
             return HttpResponseRedirect(resolve_url(settings.LOGIN_URL))
     else:
         form = UserCreationForm()
