@@ -70,20 +70,25 @@ def messages(request):
                     if e:
                         u = User.objects.get(username=to)
                         public_key = RSA.importKey(u.reporter.publickey)
-                        enc_data = public_key.encrypt(body.encode(),48)
+                        enc_data = public_key.encrypt(body.encode(),48) # TODO: fix me plz
                         body = enc_data
                     m = Message(sender=sender, recipient=user.get(), body=body, encrypted=e)
                     m.save()
             # redirect to same page
             return HttpResponseRedirect('')
+
         elif 'delete' in request.POST: 
             for d in request.POST.getlist('del'): 
                 m = Message.objects.get(id=d) 
                 m.delete()
+
         elif 'decrypt' in request.POST:
             u = User.objects.get(username=request.user)
             private_key = RSA.importKey(u.reporter.privatekey)
-            #m = Message.objects.get(id=ID FROM REQUEST CHECKBOX)
+            for d in request.POST.getlist('del'): 
+                m = Message.objects.get(id=d)
+                m.body = private_key.decrypt(m.body).decode(encoding='UTF-8') # TODO: fix me plz
+                m.save()
     else:
         form = MessageForm()
 
