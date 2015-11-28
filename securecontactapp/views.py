@@ -56,7 +56,6 @@ def messages(request):
         # create a form instance and populate it with data from the request:
         form = MessageForm(request.POST)
         if 'message' in request.POST:
-            
             # check whether it's valid:
             if form.is_valid():
                 # extract data from form.cleaned_data 
@@ -111,12 +110,13 @@ def registration(request):
         form = UserCreationForm(data=request.POST)
         if form.is_valid():
             form.save()
+            # In addition to creating an account we will also generate keypair
             usr = User.objects.get(username=request.POST['username'])
             g = Random.new().read
             key = RSA.generate(2048, g)
             private = key.exportKey(format="PEM")
             public = key.publickey().exportKey(format="PEM")
-            # make a Reporter object
+            # And make a Reporter object that adds data to our User object
             reporter = Reporter(user=usr,publickey=public,privatekey=private)
             reporter.save()
             return HttpResponseRedirect(resolve_url(settings.LOGIN_URL))
