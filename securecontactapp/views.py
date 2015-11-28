@@ -23,7 +23,8 @@ from Crypto.Cipher import PKCS1_OAEP
 
 @login_required()
 def home(request):
-    return render(request, 'home.html')
+    num_messages = len(Message.objects.filter(recipient=request.user))
+    return render(request, 'home.html', {'num_messages': num_messages})
 
 @login_required()
 def reports(request):

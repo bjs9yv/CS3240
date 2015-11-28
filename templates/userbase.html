@@ -21,11 +21,15 @@
     <a href="{% url 'reports' %}" class="flex-item">
       <span class="nav-tab"><b>REPORTS</b></span>
     </a>
-      
+      {% if num_messages %}
     <a href="{% url 'messages' %}" class="flex-item">
-      <span class="nav-tab"><b>MESSAGES</b></span>
+      <span class="nav-tab"><b>MESSAGES </b>({{num_messages}})</span>
     </a>
-    
+      {% else %}
+    <a href="{% url 'messages' %}" class="flex-item">
+      <span class="nav-tab"><b>MESSAGES </b></span>
+    </a>
+      {% endif %}
     <a href="{% url 'groups' %}" class="flex-item">
       <span class="nav-tab"><b>GROUPS</b></span>
     </a>
