@@ -23,6 +23,7 @@ from Crypto.Cipher import PKCS1_OAEP
 
 @login_required()
 def home(request):
+    # display how many messages a user has
     num_messages = len(Message.objects.filter(recipient=request.user))
     return render(request, 'home.html', {'num_messages': num_messages})
 
@@ -44,7 +45,7 @@ def reports(request):
             # redirect to a new URL:
             return HttpResponseRedirect('')
         else:
-            return HttpResponse('nope')
+            return HttpResponse('Something tragic happened')
             
     else:
         form = ReportForm()
