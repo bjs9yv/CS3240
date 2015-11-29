@@ -37,3 +37,6 @@ class Reporter(models.Model):
     user = models.OneToOneField(User)
     publickey = models.TextField()
     privatekey = models.TextField()
+
+class Group(models.Model):
+    pass

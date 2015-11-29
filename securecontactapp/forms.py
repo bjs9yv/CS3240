@@ -61,6 +61,12 @@ class ReportForm(forms.Form):
 
 class FolderForm(forms.Form):
     pass
+    
+class GroupForm(forms.Form):
+    group_name = forms.CharField(label='Group name', max_length=30)
+    group_members = forms.CharField(widget=forms.Textarea, label='Enter group members separated by commas.', required=False)
+    group_public = forms.BooleanField(widget=widgets.CheckboxInput, label='Make group private', required=False)
+    group_member_invites = forms.BooleanField(widget=widgets.CheckboxInput, label='Members can invite others', required=False)
 
 class SiteManagerForm(forms.Form):
     username = forms.CharField(label='Username')

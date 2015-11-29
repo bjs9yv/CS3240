@@ -13,6 +13,11 @@ img {
   border-color: #F95252;
 }
 
+#pagecontent {
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
 .flex-container {
   display: flex;
   height: 60px;
