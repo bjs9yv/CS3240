@@ -38,5 +38,9 @@ class Reporter(models.Model):
     publickey = models.TextField()
     privatekey = models.TextField()
 
-class Group(models.Model):
-    pass
+class ReporterGroup(models.Model):
+    name = models.TextField()
+    owner = models.ForeignKey(User)
+    group = models.ForeignKey(Group)
+    is_hidden = models.BooleanField()
+    members_can_invite = models.BooleanField()
