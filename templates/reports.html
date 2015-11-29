@@ -22,6 +22,10 @@
       <b>Encrypted: </b> {{ report.encrypted }}<br>
       <!-- Replace with DateTimeStamp -->
       <b>Body: </b> {{ report.text }}<br>
+      <b>Files: </b>
+      {% for file in report.report_files %}
+         {{ file }}
+      {% endfor%}
       <hr>
     {% endfor %}
       
