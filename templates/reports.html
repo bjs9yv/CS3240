@@ -11,10 +11,12 @@
     <p> {{ form.report_files }}
     <p> {{ form.report_is_private.label }}:{{ form.report_is_private }}
         {{ form.report_is_encrypted.label }}:{{ form.report_is_encrypted }}
-    <p><input type="submit" value="Submit" />
+    <p><input type="submit" value="Submit" name="report" />
     <br><br>
     <h1>My reports</h1>
+    <input type="submit" name="delete" value="Delete selected"/>
     {% for report in reports %}
+      <input type="checkbox" name="del" value="{{ report.id }}"/>
       <p><b>Owner: </b> {{ report.owner }}<br>
       <b>Created: </b> {{ report.timestamp }}<br>
       <b>Keyword: </b> {{ report.keyword }}<br>

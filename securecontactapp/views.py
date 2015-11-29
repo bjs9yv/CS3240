@@ -33,29 +33,34 @@ def reports(request):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = ReportForm(request.POST, request.FILES)
-        # check whether it's valid:
-        if form.is_valid():
-            # TODO: process the data in form.cleaned_data as required
-            text = form.cleaned_data['report_body']
-            keyword = form.cleaned_data['report_keyword']
-            description = form.cleaned_data['report_description']
-            private = form.cleaned_data['report_is_private']
-            encrypted = form.cleaned_data['report_is_encrypted']
-            r = Report(owner=request.user, description=description, keyword=keyword, text=text, private=private, encrypted=encrypted)
-            r.save()
-            for fn in request.FILES:
-                f = File(file=request.FILES[fn], attached_to=r)
-                f.save()
-            # redirect to a new URL:
-            return HttpResponseRedirect('')
-        else:
-            return HttpResponse('Something tragic happened')
-            
+        if 'message' in request.POST:
+            # check whether it's valid:
+            if form.is_valid():
+                # TODO: process the data in form.cleaned_data as required
+                text = form.cleaned_data['report_body']
+                keyword = form.cleaned_data['report_keyword']
+                description = form.cleaned_data['report_description']
+                private = form.cleaned_data['report_is_private']
+                encrypted = form.cleaned_data['report_is_encrypted']
+                r = Report(owner=request.user, description=description, keyword=keyword, text=text, private=private, encrypted=encrypted)
+                r.save()
+                for fn in request.FILES:
+                    f = File(file=request.FILES[fn], attached_to=r)
+                    f.save()
+                # redirect to a new URL:
+                return HttpResponseRedirect('')
+            else:
+                return HttpResponse('Something tragic happened')
+    
+        elif 'delete' in request.POST: 
+            for d in request.POST.getlist('del'): 
+                r = Report.objects.get(id=d) 
+                r.delete()
     else:
         form = ReportForm()
 
-        reports = Report.objects.filter(owner=request.user)
-        return render(request, 'reports.html', {'form': form, 'reports': reports })
+    reports = Report.objects.filter(owner=request.user)
+    return render(request, 'reports.html', {'form': form, 'reports': reports })
     
 @login_required
 def messages(request):
