@@ -5,14 +5,24 @@
 <h2>Submit a Report</h2>
 <form action="" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
+    <p> {{ form.report_description.label }}:{{ form.report_description }}
     <p> {{ form.report_body.label }} <br> {{ form.report_body }}
     <p> {{ form.report_files }}
+    <p> {{ form.report_is_private.label }}:{{ form.report_is_private }}
+        {{ form.report_is_encrypted.label }}:{{ form.report_is_encrypted }}
     <p><input type="submit" value="Submit" />
     <br><br>
     <h1>My reports</h1>
-    {% for message in messages %}
-    <p><b>Owner: </b> {{ report.owner }}
-    <p> {{ message.body }}
+    {% for report in reports %}
+      <p><b>Owner: </b> {{ report.owner }}<br>
+      <b>Created: </b> {{ report.timestamp }}<br>
+      <b>Keyword: </b> {{ report.keyword }}<br>
+      <b>Description: </b> {{ report.description }}<br>
+      <b>Private: </b> {{ report.private }} <br> 
+      <b>Encrypted: </b> {{ report.encrypted }}<br>
+      <!-- Replace with DateTimeStamp -->
+      <b>Body: </b> {{ report.text }}<br>
+      <hr>
     {% endfor %}
       
 </form>

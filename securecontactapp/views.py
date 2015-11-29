@@ -50,7 +50,7 @@ def reports(request):
         form = ReportForm()
 
         reports = Report.objects.filter(owner=request.user)
-        return render(request, 'reports.html', {'form': form, })
+        return render(request, 'reports.html', {'form': form, 'reports': reports })
     
 @login_required
 def messages(request):

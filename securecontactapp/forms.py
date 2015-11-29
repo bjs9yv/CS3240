@@ -56,8 +56,14 @@ class MessageForm(forms.Form):
     encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypt this message?', required=False)
 
 class ReportForm(forms.Form):
+    report_description = forms.CharField(label='Description', max_length=80, required=True)
+    report_keyword = forms.CharField(label='Keyword', max_length=15)
     report_body = forms.CharField(widget=forms.Textarea, label='Type your report here')
     report_files = MultiFileField()
+    report_is_private = forms.BooleanField(widget=widgets.CheckboxInput, label='Private', required=False)
+    report_is_encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypted', required=False)   
+    # TODO: report_folder does not work now. Need to add selection menu populated with a user's reports
+    # report_folder = report_keyword = forms.CharField(label='Keyword', max_length=20)
 
 class FolderForm(forms.Form):
     # Should have auto-generated primary keys since names aren't unique among users
