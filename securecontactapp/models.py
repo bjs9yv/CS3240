@@ -6,12 +6,12 @@ class Report(models.Model):
     owner = models.ForeignKey(User)
     folder = models.ForeignKey('Folder', blank=True, null=True)
     private = models.BooleanField(default=False)
+    encrypted = models.BooleanField(default=False)
+    description = models.TextField()
+    keyword = models.TextField(null=True)
     text = models.TextField()
-    timestamp = models.TimeField(auto_now_add=True)
-    # TODO: NEED TO ADD SHORT DESCRIPTION IN ADDITION TO LONG DESCRIPTION
-    # TODO: CONSIDER ADDING LOCATION 
-    # TODO: CONSIDER ADDING TAGS OR KEYWORDS
-
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
 # Folders to hold other Reports
 class Folder(models.Model):
     parent = models.ForeignKey('Folder')
