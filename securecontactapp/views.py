@@ -36,7 +36,11 @@ def reports(request):
         if form.is_valid():
             # TODO: process the data in form.cleaned_data as required
             text = form.cleaned_data['report_body']
-            r = Report(owner=request.user, text=text)
+            keyword = form.cleaned_data['report_keyword']
+            description = form.cleaned_data['report_description']
+            private = form.cleaned_data['report_is_private']
+            encrypted = form.cleaned_data['report_is_encrypted']
+            r = Report(owner=request.user, description=description, keyword=keyword, text=text, private=private, encrypted=encrypted)
             r.save()
             for fn in request.FILES:
                 f = File(file=request.FILES[fn], attached_to=r)

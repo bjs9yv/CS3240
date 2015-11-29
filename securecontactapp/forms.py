@@ -56,8 +56,8 @@ class MessageForm(forms.Form):
     encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypt this message?', required=False)
 
 class ReportForm(forms.Form):
-    report_description = forms.CharField(label='Description', max_length=80, required=True)
-    report_keyword = forms.CharField(label='Keyword', max_length=15)
+    report_description = forms.CharField(label='Description', max_length=80)
+    report_keyword = forms.CharField(label='Keyword', max_length=15, required="False")
     report_body = forms.CharField(widget=forms.Textarea, label='Type your report here')
     report_files = MultiFileField()
     report_is_private = forms.BooleanField(widget=widgets.CheckboxInput, label='Private', required=False)

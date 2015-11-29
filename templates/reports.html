@@ -6,6 +6,7 @@
 <form action="" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <p> {{ form.report_description.label }}:{{ form.report_description }}
+    <p> {{ form.report_keyword.label }}:{{ form.report_keyword }}
     <p> {{ form.report_body.label }} <br> {{ form.report_body }}
     <p> {{ form.report_files }}
     <p> {{ form.report_is_private.label }}:{{ form.report_is_private }}
@@ -24,7 +25,6 @@
       <b>Body: </b> {{ report.text }}<br>
       <hr>
     {% endfor %}
-      
 </form>
 
 {% endblock %}
