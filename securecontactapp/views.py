@@ -25,7 +25,7 @@ from Crypto.Cipher import PKCS1_OAEP
 def home(request):
     # display how many messages a user has
     num_messages = len(Message.objects.filter(recipient=request.user))
-    return render(request, 'home.html', {'num_messages': num_messages})
+    return render(request, 'home.html', {'num_messages': num_messages, 'reports': reports})
 
 @login_required()
 def reports(request):
@@ -50,8 +50,8 @@ def reports(request):
     else:
         form = ReportForm()
 
-        return render(request, 'reports.html', {'form': form})
-    
+        reports = Report.objects.filter(owner=request.user)
+        return render(request, 'reports.html', {'form': form, })
     
 @login_required
 def messages(request):

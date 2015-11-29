@@ -8,6 +8,13 @@
     <p> {{ form.report_body.label }} <br> {{ form.report_body }}
     <p> {{ form.report_files }}
     <p><input type="submit" value="Submit" />
+    <br><br>
+    <h1>My reports</h1>
+    {% for message in messages %}
+    <p><b>Owner: </b> {{ report.owner }}
+    <p> {{ message.body }}
+    {% endfor %}
+      
 </form>
 
 {% endblock %}

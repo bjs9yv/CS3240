@@ -8,6 +8,9 @@ class Report(models.Model):
     private = models.BooleanField(default=False)
     text = models.TextField()
     timestamp = models.TimeField(auto_now_add=True)
+    # TODO: NEED TO ADD SHORT DESCRIPTION IN ADDITION TO LONG DESCRIPTION
+    # TODO: CONSIDER ADDING LOCATION 
+    # TODO: CONSIDER ADDING TAGS OR KEYWORDS
 
 # Folders to hold other Reports
 class Folder(models.Model):
@@ -37,3 +40,11 @@ class Reporter(models.Model):
     user = models.OneToOneField(User)
     publickey = models.TextField()
     privatekey = models.TextField()
+
+class ReporterGroup(models.Model):
+    # NOTE: ACCORDING TO SPECS, GROUP NAMES SHOULD BE UNIQUE
+    name = models.TextField()
+    owner = models.ForeignKey(User)
+    # group = models.ForeignKey(Group)
+    is_hidden = models.BooleanField()
+    members_can_invite = models.BooleanField()

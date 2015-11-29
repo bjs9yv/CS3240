@@ -60,7 +60,14 @@ class ReportForm(forms.Form):
     report_files = MultiFileField()
 
 class FolderForm(forms.Form):
-    pass
+    # Should have auto-generated primary keys since names aren't unique among users
+    username = forms.CharField(label='Username')
+    # Reports need to have a "folder" foreign key field
+    
+class GroupForm(forms.Form):
+    group_name = forms.CharField(label='Group name', max_length=50)
+    group_is_private = forms.BooleanField(widget=widgets.CheckboxInput, label='Hidden', required=False)
+    group_members_can_invite = forms.BooleanField(widget=widgets.CheckboxInput, label='Members can invite', required=False)
 
 class SiteManagerForm(forms.Form):
     username = forms.CharField(label='Username')
