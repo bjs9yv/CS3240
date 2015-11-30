@@ -137,7 +137,8 @@ def groups(request):
 
 @login_required()
 def account(request):
-    return render(request, 'account.html')
+    context = {'site_manager': user_is_site_manager(request.user)}
+    return render(request, 'account.html', context)
 
 @sensitive_post_parameters('username', 'password1', 'password2')
 @csrf_protect
