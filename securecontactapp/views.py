@@ -119,9 +119,7 @@ def groups(request):
         if 'create' in request.POST:
             form = GroupForm(data=request.POST)
             if form.is_valid():
-                new_group = form.save(commit=False)
-                new_group.owner = request.user
-                new_group.save()
+                new_group = form.save()
                 request.user.groups.add(new_group)
         else:
             for key in request.POST.keys():
