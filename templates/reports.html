@@ -15,7 +15,7 @@
     <br><br>
     <h1>My reports</h1>
     <input type="submit" name="delete" value="Delete selected"/>
-    {% for report in reports %}
+    {% for report, files in reports %}
       <input type="checkbox" name="del" value="{{ report.id }}"/>
       <p><b>Owner: </b> {{ report.owner }}<br>
       <b>Created: </b> {{ report.timestamp }}<br>
@@ -26,7 +26,7 @@
       <!-- Replace with DateTimeStamp -->
       <b>Body: </b> {{ report.text }}<br>
       <b>Files: </b>
-      {% for file in report.report_files %}
+      {% for file in files %}
          {{ file }}
       {% endfor%}
       <hr>

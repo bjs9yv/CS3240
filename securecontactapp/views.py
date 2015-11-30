@@ -36,21 +36,21 @@ def reports(request):
         if 'message' in request.POST:
             # check whether it's valid:
             if form.is_valid():
-                # TODO: process the data in form.cleaned_data as required
                 text = form.cleaned_data['report_body']
                 keyword = form.cleaned_data['report_keyword']
                 description = form.cleaned_data['report_description']
                 private = form.cleaned_data['report_is_private']
                 encrypted = form.cleaned_data['report_is_encrypted']
+                # TODO: if encrypted == True... encrypt the file(s) in a similar manner to how message encryption was done below
                 r = Report(owner=request.user, description=description, keyword=keyword, text=text, private=private, encrypted=encrypted)
                 r.save()
                 for fn in request.FILES:
                     f = File(file=request.FILES[fn], attached_to=r)
                     f.save()
-                # redirect to a new URL:
+                # refresh page
                 return HttpResponseRedirect('')
             else:
-                return HttpResponse('Something tragic happened')
+                return HttpResponse('Form not valid')
     
         elif 'delete' in request.POST: 
             for d in request.POST.getlist('del'): 
@@ -58,9 +58,15 @@ def reports(request):
                 r.delete()
     else:
         form = ReportForm()
-
+        
     reports = Report.objects.filter(owner=request.user)
-    return render(request, 'reports.html', {'form': form, 'reports': reports })
+    reports_and_files = []
+    for report in reports:
+        files = File.objects.filter(attached_to=report)
+        report = (report,files)
+        reports_and_files.append(report)
+        
+    return render(request, 'reports.html', {'form': form, 'reports': reports_and_files})
     
 @login_required
 def messages(request):
