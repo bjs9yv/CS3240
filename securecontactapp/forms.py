@@ -85,4 +85,4 @@ class AddUserToGroupForm(forms.Form):
 
 class SiteManagerForm(forms.Form):
     username = forms.CharField(label='Username')
-    group = forms.CharField(label='Group')
+    group = forms.CharField(label='Group', required=False)

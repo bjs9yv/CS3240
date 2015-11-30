@@ -22,12 +22,14 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
 @login_required()
+@user_passes_test(lambda u: u.is_active)
 def home(request):
     # display how many messages a user has
     num_messages = len(Message.objects.filter(recipient=request.user))
     return render(request, 'home.html', {'num_messages': num_messages, 'reports': reports})
 
 @login_required()
+@user_passes_test(lambda u: u.is_active)
 def reports(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
@@ -69,6 +71,7 @@ def reports(request):
     return render(request, 'reports.html', {'form': form, 'reports': reports_and_files})
     
 @login_required
+@user_passes_test(lambda u: u.is_active)
 def messages(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
@@ -120,6 +123,7 @@ def messages(request):
     return render(request, 'messages.html', {'form': form, 'messages': messages})
     
 @login_required()
+@user_passes_test(lambda u: u.is_active)
 def groups(request):
     if request.method == 'POST':
         if 'create' in request.POST:
@@ -142,6 +146,7 @@ def groups(request):
     return render(request, 'groups.html', context)
 
 @login_required()
+@user_passes_test(lambda u: u.is_active)
 def account(request):
     context = {'site_manager': user_is_site_manager(request.user)}
     return render(request, 'account.html', context)
@@ -184,7 +189,6 @@ def check_login(request):
 
     return JsonResponse({'valid': valid})
 
-@login_required
 def humans(request):
     with open('/app/team16project/static/humans.txt', 'r') as f:
         return HttpResponse(f.read())
@@ -193,6 +197,7 @@ def user_is_site_manager(user):
     return user.groups.filter(name='Site Manager').exists()
 
 @user_passes_test(user_is_site_manager)
+@user_passes_test(lambda u: u.is_active)
 @csrf_protect
 def site_manager(request):
     if request.method == 'POST':
