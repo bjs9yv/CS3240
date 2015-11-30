@@ -33,7 +33,7 @@ def reports(request):
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = ReportForm(request.POST, request.FILES)
-        if 'message' in request.POST:
+        if 'report' in request.POST:
             # check whether it's valid:
             if form.is_valid():
                 text = form.cleaned_data['report_body']
