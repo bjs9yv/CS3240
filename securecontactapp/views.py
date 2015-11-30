@@ -194,6 +194,8 @@ def site_manager(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             user = User.objects.filter(username=username)
+            groupname = form.cleaned_data['group']
+            group = Group.objects.filter(name=groupname)
             siteManager = Group.objects.get(name='Site Manager')
             if user.exists():
                 user = user.get()
@@ -209,6 +211,12 @@ def site_manager(request):
                     user.user_permissions.remove('securecontactapp.add_report')
                 elif 'resume_reporter' in request.POST:
                     user.user_permissions.add('securecontactapp.add_report')
+                elif group.exists():
+                    group = group.get()
+                    if 'add_group' in request.POST:
+                        user.groups.add(group)
+                    elif 'remove_group' in request.POST:
+                        user.groups.remove(group)
                 user.save()
     else:
         form = SiteManagerForm()
