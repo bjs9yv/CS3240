@@ -163,9 +163,9 @@ input {
 
 <center>
 <img src="/static/securecontactapp/SecureContact.png">
-{% if form.errors %}
-<p>The two password fields didn't match. Please try again.</p>
-{% endif %}
+{% for _, message in form.errors.items %}
+{{ message }}
+{% endfor %}
 </center>
 
 <body>
