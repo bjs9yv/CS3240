@@ -2,6 +2,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.forms import widgets
+from django.contrib.auth.models import Group
 
 # From http://koensblog.eu/blog/7/multiple-file-upload-django/
 class MultiFileInput(forms.FileInput):
@@ -70,10 +71,17 @@ class FolderForm(forms.Form):
     username = forms.CharField(label='Username')
     # Reports need to have a "folder" foreign key field
     
-class GroupForm(forms.Form):
-    group_name = forms.CharField(label='Group name', max_length=50)
-    group_is_private = forms.BooleanField(widget=widgets.CheckboxInput, label='Hidden', required=False)
-    group_members_can_invite = forms.BooleanField(widget=widgets.CheckboxInput, label='Members can invite', required=False)
+class GroupForm(forms.ModelForm):
+    name = forms.CharField(label='Group name', max_length=50)
+    # group_is_private = forms.BooleanField(widget=widgets.CheckboxInput, label='Hidden', required=False)
+    # group_members_can_invite = forms.BooleanField(widget=widgets.CheckboxInput, label='Members can invite', required=False)
+
+    class Meta:
+        model = Group
+        fields = ('name',)
+
+class AddUserToGroupForm(forms.Form):
+    username = forms.CharField(label='Username')
 
 class SiteManagerForm(forms.Form):
     username = forms.CharField(label='Username')

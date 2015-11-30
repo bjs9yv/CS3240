@@ -4,6 +4,22 @@
 
 {% block content %}
 
-<p> see your groups here </p>
+<p><h1> see your groups here </h1></p>
+{% for group, addForm in groups %}
+    <p>{{ group }}
+        <form action="" method="POST">
+           {% csrf_token %}
+           {{ addForm.as_p }}
+           <input type='submit' value='Add User' name='add {{ group }}'/>
+       </form>
+    </p>
+{% endfor %}
+
+<p><h1> create a new group </h1></p>
+<form action="" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type='submit' value='Create' name='create'/>
+</form>
 
 {% endblock %}

@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.db.models.signals import post_save
 
-from .forms import MessageForm, ReportForm, SiteManagerForm
+from .forms import MessageForm, ReportForm, SiteManagerForm, GroupForm, AddUserToGroupForm
 from .models import Message, Report, File, Reporter
 
 import os
@@ -115,7 +115,27 @@ def messages(request):
     
 @login_required()
 def groups(request):
-    return render(request, 'groups.html')
+    if request.method == 'POST':
+        if 'create' in request.POST:
+            form = GroupForm(data=request.POST)
+            if form.is_valid():
+                new_group = form.save(commit=False)
+                new_group.owner = request.user
+                new_group.save()
+                request.user.groups.add(new_group)
+        else:
+            for key in request.POST.keys():
+                if key.startswith('add '):
+                    form = AddUserToGroupForm(data=request.POST)
+                    group = Group.objects.get(name=key[4:])
+                    user = User.objects.filter(username=request.POST['username'])
+                    if user.exists():
+                        group.user_set.add(user.get())
+    form = GroupForm()
+    groups = request.user.groups.all()
+    groups_with_add_form = map(lambda g: (g, AddUserToGroupForm()), groups)
+    context = {'form': form, 'groups': groups_with_add_form}
+    return render(request, 'groups.html', context)
 
 @login_required()
 def account(request):
