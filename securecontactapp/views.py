@@ -125,9 +125,7 @@ def groups(request):
         if 'create' in request.POST:
             form = GroupForm(data=request.POST)
             if form.is_valid():
-                new_group = form.save(commit=False)
-                new_group.owner = request.user
-                new_group.save()
+                new_group = form.save()
                 request.user.groups.add(new_group)
         else:
             for key in request.POST.keys():
@@ -135,7 +133,7 @@ def groups(request):
                     form = AddUserToGroupForm(data=request.POST)
                     group = Group.objects.get(name=key[4:])
                     user = User.objects.filter(username=request.POST['username'])
-                    if user.exists():
+                    if request.user in group.user_set.all() and user.exists():
                         group.user_set.add(user.get())
     form = GroupForm()
     groups = request.user.groups.all()
@@ -145,7 +143,8 @@ def groups(request):
 
 @login_required()
 def account(request):
-    return render(request, 'account.html')
+    context = {'site_manager': user_is_site_manager(request.user)}
+    return render(request, 'account.html', context)
 
 @sensitive_post_parameters('username', 'password1', 'password2')
 @csrf_protect
@@ -201,6 +200,8 @@ def site_manager(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             user = User.objects.filter(username=username)
+            groupname = form.cleaned_data['group']
+            group = Group.objects.filter(name=groupname)
             siteManager = Group.objects.get(name='Site Manager')
             if user.exists():
                 user = user.get()
@@ -216,6 +217,12 @@ def site_manager(request):
                     user.user_permissions.remove('securecontactapp.add_report')
                 elif 'resume_reporter' in request.POST:
                     user.user_permissions.add('securecontactapp.add_report')
+                elif group.exists():
+                    group = group.get()
+                    if 'add_group' in request.POST:
+                        user.groups.add(group)
+                    elif 'remove_group' in request.POST:
+                        user.groups.remove(group)
                 user.save()
     else:
         form = SiteManagerForm()
