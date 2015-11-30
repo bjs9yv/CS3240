@@ -129,7 +129,7 @@ def groups(request):
                     form = AddUserToGroupForm(data=request.POST)
                     group = Group.objects.get(name=key[4:])
                     user = User.objects.filter(username=request.POST['username'])
-                    if user.exists():
+                    if request.user in group.user_set.all() and user.exists():
                         group.user_set.add(user.get())
     form = GroupForm()
     groups = request.user.groups.all()
