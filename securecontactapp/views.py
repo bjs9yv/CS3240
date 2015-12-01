@@ -31,6 +31,7 @@ def home(request):
 @login_required()
 @user_passes_test(lambda u: u.is_active)
 def reports(request):
+    reports = Report.objects.filter(owner=request.user)
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
@@ -53,22 +54,39 @@ def reports(request):
                 return HttpResponseRedirect('')
             else:
                 return HttpResponse('Form not valid')
-    
         elif 'delete' in request.POST: 
             for d in request.POST.getlist('del'): 
                 r = Report.objects.get(id=d) 
                 r.delete()
+        elif 'dropdown' in request.POST:
+            dropdown_filter = request.POST.get('dropdown')
+            if dropdown_filter == "Private":
+                reports = Report.objects.filter(owner=request.user, private=True)
+            elif dropdown_filter == "Public":    
+                reports = Report.objects.filter(owner=request.user, private=False)
+            elif dropdown_filter == "Folder":
+                # TODO: folders linked to reports
+                pass
+            elif dropdown_filter == "Group":
+                # TODO: groups linked to reports
+                pass
+        elif 'new_folder' in request.POST:
+            # TODO: make new folder and put selected reports in it 
+            pass
+        elif 'move_to_folder' in request.POST:
+            # TODO: move selected to existing folder
+            pass
     else:
         form = ReportForm()
-        
-    reports = Report.objects.filter(owner=request.user)
+
     reports_and_files = []
     for report in reports:
         files = File.objects.filter(attached_to=report)
         report = (report,files)
         reports_and_files.append(report)
-        
-    return render(request, 'reports.html', {'form': form, 'reports': reports_and_files})
+    groups = request.user.groups.all()
+    # TODO pass folders to request as well: folders = request.user.folders.all()
+    return render(request, 'reports.html', {'form': form, 'reports': reports_and_files,'groups':groups})
     
 @login_required
 @user_passes_test(lambda u: u.is_active)

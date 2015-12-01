@@ -13,22 +13,39 @@
         {{ form.report_is_encrypted.label }}:{{ form.report_is_encrypted }}
     <p><input type="submit" value="Submit" name="report" />
     <br><br>
-    <h1>My reports</h1>
+    <h1>My reports in
+    <select name="dropdown" onchange="form.submit()">
+      <option value=""></option>
+      <option value="All">All</option>
+      {% for group in groups %}
+         <option name="Group" value="{{group}}">Group: {{group}}</option>
+      {% endfor %}
+      <option value="Folder">Folder: </option>
+      <option value="Private">My Private Reports</option>
+      <option value="Public">My Public Reports</option>
+    </select>
+    </h1>
     <input type="submit" name="delete" value="Delete selected"/>
+    Move to Existing Folder: 
+    <select name="move_to_folder" onchange="form.submit()"></select>
+      <!-- {% for folder in folders % } -->
+    <input type="submit" name="new_folder" value="Move Selected to New Folder: " title="Specify a new foldername, then press this button"/>{{ form.report_folder }}</input>
+    <br><br><hr>
     {% for report, files in reports %}
       <input type="checkbox" name="del" value="{{ report.id }}"/>
       <p><b>Owner: </b> {{ report.owner }}<br>
+      <!-- Replace with DateTimeStamp -->
       <b>Created: </b> {{ report.timestamp }}<br>
       <b>Keyword: </b> {{ report.keyword }}<br>
       <b>Description: </b> {{ report.description }}<br>
-      <b>Private: </b> {{ report.private }} <br> 
-      <b>Encrypted: </b> {{ report.encrypted }}<br>
-      <!-- Replace with DateTimeStamp -->
       <b>Body: </b> {{ report.text }}<br>
-      <b>Files: </b>
+      <b>Private: </b> {{ report.private }} <br> 
+      <b>File(s) are Encrypted: </b> {{ report.encrypted }}<br>
+      <a title="Use the Standalone Application to download and/or decrypt this file"><b>Files: </b>
       {% for file in files %}
-         {{ file }}
+         {{ file.file }}
       {% endfor%}
+      </a>
       <hr>
     {% endfor %}
 </form>

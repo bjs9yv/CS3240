@@ -64,6 +64,7 @@ class ReportForm(forms.Form):
     report_is_private = forms.BooleanField(widget=widgets.CheckboxInput, label='Private', required=False)
     report_is_encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypted', required=False)   
     # TODO: report_folder does not work now. Need to add selection menu populated with a user's reports
+    report_folder = forms.CharField(label='new_folder', max_length=15,required=False)
     # report_folder = report_keyword = forms.CharField(label='Keyword', max_length=20)
 
 class FolderForm(forms.Form):
