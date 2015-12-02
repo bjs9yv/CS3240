@@ -36,6 +36,7 @@
 </form>
 <br>
 <form action="" method="POST">
+    {% csrf_token %}
     <input type="submit" name="delete" value="Delete selected"/>
     Move to Existing Folder: 
     <select name="move_to_folder" onchange="form.submit()"></select>
