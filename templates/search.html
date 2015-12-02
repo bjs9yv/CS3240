@@ -1,0 +1,28 @@
+{% extends "userbase.html" %}
+
+{% block content %}
+
+<h2>Search Reports</h2>
+<form action="search" method="GET">
+    <p><input type="text" name="q" /><input type="submit" value="Search" /></p>
+</form>
+
+<br><br><hr>
+{% for report, files in reports %}
+  <p><b>Owner: </b> {{ report.owner }}<br>
+  <!-- Replace with DateTimeStamp -->
+  <b>Created: </b> {{ report.timestamp }}<br>
+  <b>Keyword: </b> {{ report.keyword }}<br>
+  <b>Description: </b> {{ report.description }}<br>
+  <b>Body: </b> {{ report.text }}<br>
+  <b>Private: </b> {{ report.private }} <br> 
+  <b>File(s) are Encrypted: </b> {{ report.encrypted }}<br>
+  <a title="Use the Standalone Application to download and/or decrypt this file"><b>Files: </b>
+  {% for file in files %}
+     {{ file.file }}
+  {% endfor%}
+  </a>
+  <hr>
+{% endfor %}
+
+{% endblock %}

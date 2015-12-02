@@ -71,7 +71,7 @@ def reports(request):
     if 'visibility' in request.GET:
         reports = reports.filter(private=(request.GET['visibility'] == 'private'))
     if 'folder' in request.GET:
-        folder = Folder.objects.filter(owner=request.user, name=request.GET['group'])
+        folder = Folder.objects.filter(owner=request.user, name=request.GET['folder'])
         if folder.exists():
             reports = reports.filter(folder=folder.get())
 
@@ -82,7 +82,7 @@ def reports(request):
         reports_and_files.append(report)
     groups = request.user.groups.all()
     # TODO pass folders to request as well: folders = request.user.folders.all()
-    return render(request, 'reports.html', {'form': form, 'reports': reports_and_files,'groups':groups})
+    return render(request, 'reports.html', {'form': form, 'reports': reports_and_files})
     
 @login_required
 @user_passes_test(lambda u: u.is_active)
@@ -247,3 +247,21 @@ def site_manager(request):
         form = SiteManagerForm()
     context = {'form': form}
     return render(request, 'sitemanager.html', context)
+
+@login_required()
+@user_passes_test(lambda u: u.is_active)
+def search(request):
+    reports = Report.objects.all()
+    # Only show public reports, unless user is SM
+    if not user_is_site_manager(request.user):
+        reports = reports.filter(private=False)
+    # But show user's own private reports
+    reports |= Report.objects.filter(owner=request.user)
+
+    reports_and_files = []
+    for report in reports:
+        files = File.objects.filter(attached_to=report)
+        report = (report,files)
+        reports_and_files.append(report)
+    context = {'reports': reports_and_files}
+    return render(request, 'search.html', context)
