@@ -260,10 +260,16 @@ def search(request):
 
     if 'q' in request.GET:
         for term in request.GET['q'].split():
-            regex = r'\y%s\y' % term
-            desc_matches = reports.filter(description__iregex=regex)
-            text_matches = reports.filter(text__iregex=regex)
-            reports = desc_matches | text_matches
+            if term[0] == '-':
+                regex = r'\y%s\y' % term[1:]
+                desc_matches = reports.exclude(description__iregex=regex)
+                text_matches = reports.exclude(text__iregex=regex)
+                reports = desc_matches & text_matches
+            else:
+                regex = r'\y%s\y' % term
+                desc_matches = reports.filter(description__iregex=regex)
+                text_matches = reports.filter(text__iregex=regex)
+                reports = desc_matches | text_matches
 
     reports_and_files = []
     for report in reports:
