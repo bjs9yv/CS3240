@@ -13,18 +13,29 @@
         {{ form.report_is_encrypted.label }}:{{ form.report_is_encrypted }}
     <p><input type="submit" value="Submit" name="report" />
     <br><br>
-    <h1>My reports in
-    <select name="dropdown" onchange="form.submit()">
-      <option value=""></option>
-      <option value="All">All</option>
-      {% for group in groups %}
-         <option name="Group" value="{{group}}">Group: {{group}}</option>
-      {% endfor %}
-      <option value="Folder">Folder: </option>
-      <option value="Private">My Private Reports</option>
-      <option value="Public">My Public Reports</option>
-    </select>
-    </h1>
+</form>
+<form action="" method="GET">
+    <h1>My Reports</h1>
+    <table>
+        <tr>
+            <td>
+                <select name="visibility">
+                    <option selected disabled>Visibility</option>
+                    <option value="public">Public</option>
+                    <option value="private">Private</option>
+                </select>
+            </td><td>
+                <select name="folder">
+                    <option selected disabled>Folder</option>
+                </select>
+            </td><td>
+                <input type="submit" value="Filter" />
+            </td>
+        </tr>
+    </table>
+</form>
+<br>
+<form action="" method="POST">
     <input type="submit" name="delete" value="Delete selected"/>
     Move to Existing Folder: 
     <select name="move_to_folder" onchange="form.submit()"></select>

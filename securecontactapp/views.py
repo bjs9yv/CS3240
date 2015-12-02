@@ -58,18 +58,6 @@ def reports(request):
             for d in request.POST.getlist('del'): 
                 r = Report.objects.get(id=d) 
                 r.delete()
-        elif 'dropdown' in request.POST:
-            dropdown_filter = request.POST.get('dropdown')
-            if dropdown_filter == "Private":
-                reports = Report.objects.filter(owner=request.user, private=True)
-            elif dropdown_filter == "Public":    
-                reports = Report.objects.filter(owner=request.user, private=False)
-            elif dropdown_filter == "Folder":
-                # TODO: folders linked to reports
-                pass
-            elif dropdown_filter == "Group":
-                # TODO: groups linked to reports
-                pass
         elif 'new_folder' in request.POST:
             # TODO: make new folder and put selected reports in it 
             pass
@@ -78,6 +66,14 @@ def reports(request):
             pass
     else:
         form = ReportForm()
+
+    reports = Report.objects.filter(owner=request.user)
+    if 'visibility' in request.GET:
+        reports = reports.filter(private=(request.GET['visibility'] == 'private'))
+    if 'folder' in request.GET:
+        folder = Folder.objects.filter(owner=request.user, name=request.GET['group'])
+        if folder.exists():
+            reports = reports.filter(folder=folder.get())
 
     reports_and_files = []
     for report in reports:
