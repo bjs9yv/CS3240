@@ -16,7 +16,7 @@ class Report(models.Model):
 class Folder(models.Model):
     owner = models.ForeignKey(User)
     parent = models.ForeignKey('Folder', blank=True, null=True)
-    name = models.TextField()
+    name = models.CharField(max_length=20)
     
     def __str__(self):
         if self.parent:
