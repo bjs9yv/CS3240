@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.db.models.signals import post_save
 
-from .forms import MessageForm, ReportForm, SiteManagerForm, GroupForm, AddUserToGroupForm
+from .forms import MessageForm, ReportForm, SiteManagerForm, GroupForm, AddUserToGroupForm, FolderForm
 from .models import Message, Report, File, Reporter, Folder
 
 import os
@@ -178,9 +178,8 @@ def registration(request):
     if request.method == "POST":
         form = UserCreationForm(data=request.POST)
         if form.is_valid():
-            form.save()
+            usr = form.save()
             # In addition to creating an account we will also generate keypair
-            usr = User.objects.get(username=request.POST['username'])
             g = Random.new().read
             key = RSA.generate(2048, g)
             private = key.exportKey(format="PEM")
@@ -188,6 +187,9 @@ def registration(request):
             # And make a Reporter object that adds data to our User object
             reporter = Reporter(user=usr,publickey=public,privatekey=private)
             reporter.save()
+            # Create a root folder
+            root = Folder(name='', parent=None, owner=usr)
+            root.save()
             return HttpResponseRedirect(resolve_url(settings.LOGIN_URL))
     else:
         form = UserCreationForm()
@@ -284,3 +286,17 @@ def search(request):
         reports_and_files.append(report)
     context = {'reports': reports_and_files}
     return render(request, 'search.html', context)
+
+@login_required()
+@user_passes_test(lambda u: u.is_active)
+def folder(request):
+    if request.method == 'POST':
+        form = FolderForm(request.POST)
+        folder = form.save(commit=False)
+        folder.owner = request.user
+        folder.save()
+    else:
+        form = FolderForm()
+    form.fields['parent'].queryset = Folder.objects.filter(owner=request.user)
+    context = {'form': form}
+    return render(request, 'folder.html', context)
