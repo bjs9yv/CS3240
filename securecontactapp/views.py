@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from django.db.models.signals import post_save
 
 from .forms import MessageForm, ReportForm, SiteManagerForm, GroupForm, AddUserToGroupForm
-from .models import Message, Report, File, Reporter
+from .models import Message, Report, File, Reporter, Folder
 
 import os
 from base64 import b64encode, b64decode
@@ -66,6 +66,7 @@ def reports(request):
             pass
     else:
         form = ReportForm()
+    form.fields['report_folder'].queryset = Folder.objects.filter(owner=request.user)
 
     reports = Report.objects.filter(owner=request.user)
     if 'visibility' in request.GET:
@@ -80,9 +81,9 @@ def reports(request):
         files = File.objects.filter(attached_to=report)
         report = (report,files)
         reports_and_files.append(report)
-    groups = request.user.groups.all()
-    # TODO pass folders to request as well: folders = request.user.folders.all()
-    return render(request, 'reports.html', {'form': form, 'reports': reports_and_files})
+    folders = Folder.objects.filter(owner=request.user)
+    context = {'form': form, 'reports': reports_and_files, 'folders': folders}
+    return render(request, 'reports.html', context)
     
 @login_required
 @user_passes_test(lambda u: u.is_active)

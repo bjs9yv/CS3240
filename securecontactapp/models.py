@@ -14,9 +14,12 @@ class Report(models.Model):
     
 # Folders to hold other Reports
 class Folder(models.Model):
-    parent = models.ForeignKey('Folder')
     owner = models.ForeignKey(User)
+    parent = models.ForeignKey('Folder')
     name = models.TextField()
+    
+    def __str__(self):
+        return self.name
 
 # helper function to give path to upload files to
 def report_filename(instance, filename):
