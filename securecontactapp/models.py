@@ -19,9 +19,11 @@ class Folder(models.Model):
     name = models.TextField()
     
     def __str__(self):
-        if not self.parent:
-            return '/' + self.name
-        return str(self.parent) + '/' + self.name
+        if self.parent:
+            parent = str(self.parent)
+        else:
+            parent = '/'
+        return parent + self.name + '/'
 
 # helper function to give path to upload files to
 def report_filename(instance, filename):

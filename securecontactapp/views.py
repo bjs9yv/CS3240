@@ -188,9 +188,6 @@ def registration(request):
             # And make a Reporter object that adds data to our User object
             reporter = Reporter(user=usr,publickey=public,privatekey=private)
             reporter.save()
-            # Create a root folder
-            root = Folder(name='', parent=None, owner=usr)
-            root.save()
             return HttpResponseRedirect(resolve_url(settings.LOGIN_URL))
     else:
         form = UserCreationForm()
