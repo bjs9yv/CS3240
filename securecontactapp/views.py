@@ -144,7 +144,12 @@ def groups(request):
             form = GroupForm(data=request.POST)
             if form.is_valid():
                 new_group = form.save()
+                # TODO: group names are unique
+                #if Group.objects.get(name=new_group.name):
+                   # return HttpResponse('Group already exists')
                 request.user.groups.add(new_group)
+            else:
+                return HttpResponse('Group already exists')
         else:
             for key in request.POST.keys():
                 if key.startswith('add '):
@@ -155,7 +160,7 @@ def groups(request):
                         group.user_set.add(user.get())
     form = GroupForm()
     groups = request.user.groups.all()
-    groups_with_add_form = map(lambda g: (g, AddUserToGroupForm()), groups)
+    groups_with_add_form = map(lambda g: (g, AddUserToGroupForm(), g.user_set.all()), groups)
     context = {'form': form, 'groups': groups_with_add_form}
     return render(request, 'groups.html', context)
 

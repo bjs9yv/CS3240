@@ -43,6 +43,7 @@ class Reporter(models.Model):
     publickey = models.TextField()
     privatekey = models.TextField()
 
+
 class ReporterGroup(models.Model):
     # NOTE: ACCORDING TO SPECS, GROUP NAMES SHOULD BE UNIQUE
     name = models.TextField()

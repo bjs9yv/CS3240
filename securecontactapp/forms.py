@@ -71,7 +71,7 @@ class FolderForm(forms.Form):
     # Should have auto-generated primary keys since names aren't unique among users
     username = forms.CharField(label='Username')
     # Reports need to have a "folder" foreign key field
-    
+
 class GroupForm(forms.ModelForm):
     name = forms.CharField(label='Group name', max_length=50)
     # group_is_private = forms.BooleanField(widget=widgets.CheckboxInput, label='Hidden', required=False)
