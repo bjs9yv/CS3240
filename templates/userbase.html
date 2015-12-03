@@ -21,6 +21,11 @@
     <a href="{% url 'reports' %}" class="flex-item">
       <span class="nav-tab"><b>REPORTS</b></span>
     </a>
+
+    <a href="{% url 'search' %}" class="flex-item">
+      <span class="nav-tab"><b>SEARCH</b></span>
+    </a>
+
       {% if num_messages %}
     <a href="{% url 'messages' %}" class="flex-item">
       <span class="nav-tab"><b>MESSAGES </b>({{num_messages}})</span>
