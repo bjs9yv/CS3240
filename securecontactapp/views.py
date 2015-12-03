@@ -69,6 +69,7 @@ def reports(request):
     form.fields['report_folder'].queryset = Folder.objects.filter(owner=request.user)
 
     reports = Report.objects.filter(owner=request.user)
+    
     if 'visibility' in request.GET:
         reports = reports.filter(private=(request.GET['visibility'] == 'private'))
     if 'folder' in request.GET:
