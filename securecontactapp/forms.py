@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.contrib.auth.models import Group
+from .models import Folder, Report
 
 # From http://koensblog.eu/blog/7/multiple-file-upload-django/
 class MultiFileInput(forms.FileInput):
@@ -62,15 +63,13 @@ class ReportForm(forms.Form):
     report_body = forms.CharField(widget=forms.Textarea, label='Type your report here')
     report_files = MultiFileField()
     report_is_private = forms.BooleanField(widget=widgets.CheckboxInput, label='Private', required=False)
-    report_is_encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypted', required=False)   
-    # TODO: report_folder does not work now. Need to add selection menu populated with a user's reports
-    report_folder = forms.CharField(label='new_folder', max_length=15,required=False)
-    # report_folder = report_keyword = forms.CharField(label='Keyword', max_length=20)
+    report_is_encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypted', required=False)
+    report_folder = forms.ModelChoiceField(queryset=Folder.objects.none(), label='Folder')
 
-class FolderForm(forms.Form):
-    # Should have auto-generated primary keys since names aren't unique among users
-    username = forms.CharField(label='Username')
-    # Reports need to have a "folder" foreign key field
+class FolderForm(forms.ModelForm):
+    class Meta:
+        model = Folder
+        fields = ('name', 'parent')
     
 class GroupForm(forms.ModelForm):
     name = forms.CharField(label='Group name', max_length=50)

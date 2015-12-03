@@ -10,13 +10,15 @@
 <h2>Submit a Report</h2>
 <form action="" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    <p> {{ form.report_description.label }}:{{ form.report_description }}
-    <p> {{ form.report_keyword.label }}:{{ form.report_keyword }}
-    <p> {{ form.report_body.label }} <br> {{ form.report_body }}
-    <p> {{ form.report_files }}
+    <p> {{ form.report_description.label }}:{{ form.report_description }} </p>
+    <p> {{ form.report_keyword.label }}:{{ form.report_keyword }} </p>
+    <p> {{ form.report_body.label }} <br> {{ form.report_body }} </p>
+    <p> {{ form.report_folder.label }}: {{ form.report_folder }} 
+    <a href="/folder">Create a new folder</a></p>
+    <p> {{ form.report_files }} </p>
     <p> {{ form.report_is_private.label }}:{{ form.report_is_private }}
-        {{ form.report_is_encrypted.label }}:{{ form.report_is_encrypted }}
-    <p><input type="submit" value="Submit" name="report" />
+    {{ form.report_is_encrypted.label }}:{{ form.report_is_encrypted }} </p>
+    <p><input type="submit" value="Submit" name="report" /> </p>
     <br><br>
 </form>
 <form action="" method="GET">
@@ -44,9 +46,13 @@
     {% csrf_token %}
     <input type="submit" name="delete" value="Delete selected"/>
     Move to Existing Folder: 
-    <select name="move_to_folder" onchange="form.submit()"></select>
-      <!-- {% for folder in folders % } -->
-    <input type="submit" name="new_folder" value="Move Selected to New Folder: " title="Specify a new foldername, then press this button"/>{{ form.report_folder }}</input>
+    <select name="move_to_folder" onchange="form.submit()">
+      <option selected disabled>Folder</option>
+      {% for folder in folders %}
+        <option value="{{ folder.name }}">{{ folder.name }}</option>
+      {% endfor %}
+    </select>
+    <!-- <input type="submit" name="new_folder" value="Move Selected to New Folder: " title="Specify a new foldername, then press this button"/> -->
     <br><br><hr>
     {% for report, files in reports %}
       <input type="checkbox" name="del" value="{{ report.id }}"/>
