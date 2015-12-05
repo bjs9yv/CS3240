@@ -6,8 +6,9 @@
 <form action="" method="GET">
     <p><input type="text" name="q" /><input type="submit" value="Search" /></p>
 </form>
-
-<br><br><hr>
+<br><br>
+<h1>Public Reports</h1>
+<hr>
 {% for report, files in reports %}
   <p><b>Owner: </b> {{ report.owner }}<br>
   <!-- Replace with DateTimeStamp -->
