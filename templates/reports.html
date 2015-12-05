@@ -10,14 +10,7 @@
 <h2>Submit a Report</h2>
 <form action="" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    <p> {{ form.report_description.label }}:{{ form.report_description }} </p>
-    <p> {{ form.report_keyword.label }}:{{ form.report_keyword }} </p>
-    <p> {{ form.report_body.label }} <br> {{ form.report_body }} </p>
-    <p> {{ form.report_folder.label }}: {{ form.report_folder }} 
-    <a href="/folder">Create a new folder</a></p>
-    <p> {{ form.report_files }} </p>
-    <p> {{ form.report_is_private.label }}:{{ form.report_is_private }}
-    {{ form.report_is_encrypted.label }}:{{ form.report_is_encrypted }} </p>
+    {{ form.as_p }}
     <p><input type="submit" value="Submit" name="report" /> </p>
     <br><br>
 </form>

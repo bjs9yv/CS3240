@@ -43,20 +43,14 @@ def reports(request):
             if not request.user.has_perm('securecontactapp.add_report'):
                 error = 'you do not have permission to submit reports'
             elif form.is_valid():
-                text = form.cleaned_data['report_body']
-                keyword = form.cleaned_data['report_keyword']
-                description = form.cleaned_data['report_description']
-                private = form.cleaned_data['report_is_private']
-                encrypted = form.cleaned_data['report_is_encrypted']
-                folder = form.cleaned_data['report_folder']
-                if folder != None and folder.owner != request.user:
-                    folder = None
+                report = form.save(commit=False)
+                report.owner = request.user
+                if report.folder != None and report.folder.owner != request.user:
+                    report.folder = None
                 # TODO: if encrypted == True... encrypt the file(s) in a similar manner to how message encryption was done below
-                r = Report(owner=request.user, description=description, keyword=keyword,
-                        text=text, private=private, encrypted=encrypted, folder=folder)
-                r.save()
+                report.save()
                 for fn in request.FILES:
-                    f = File(file=request.FILES[fn], attached_to=r)
+                    f = File(file=request.FILES[fn], attached_to=report)
                     f.save()
             else:
                 error = 'form not valid'
@@ -79,7 +73,7 @@ def reports(request):
                     r.save()
     else:
         form = ReportForm()
-    form.fields['report_folder'].queryset = Folder.objects.filter(owner=request.user)
+    form.fields['folder'].queryset = Folder.objects.filter(owner=request.user)
 
     reports = Report.objects.filter(owner=request.user)
     

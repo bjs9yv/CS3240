@@ -8,7 +8,7 @@ class Report(models.Model):
     private = models.BooleanField(default=False)
     encrypted = models.BooleanField(default=False)
     description = models.TextField()
-    keyword = models.TextField(null=True)
+    keyword = models.TextField(null=True, blank=True)
     text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     
