@@ -53,9 +53,19 @@ class MultiFileField(forms.FileField):
         return True
 
 class MessageForm(forms.Form):
-    message_recipient = forms.CharField(label='Send to', max_length=30, autocomplete='off')
-    message_body = forms.CharField(widget=forms.Textarea, label='Type your message here', autocomplete='off')
+    message_recipient = forms.CharField(label='Send to', max_length=30)
+    message_body = forms.CharField(widget=forms.Textarea, label='Type your message here')
     encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypt this message?', required=False)
+
+"""class ReportForm(forms.Form):
+    report_description = forms.CharField(label='Description', max_length=80, required=True)
+    report_keyword = forms.CharField(label='Keyword', max_length=15,required=False)
+    report_body = forms.CharField(widget=forms.Textarea, label='Type your report here')
+    report_files = MultiFileField()
+    report_is_private = forms.BooleanField(widget=widgets.CheckboxInput, label='Private', required=False)
+    report_is_encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypted', required=False)
+    report_folder = forms.ModelChoiceField(queryset=Folder.objects.all(), label='Folder', required=False)
+    """
 
 class ReportForm(forms.ModelForm):
     files = MultiFileField()
@@ -74,15 +84,15 @@ class FolderForm(forms.ModelForm):
         fields = ('name', 'parent')
     
 class GroupForm(forms.ModelForm):
-    name = forms.CharField(label='Group name', max_length=50, autocomplete='off')
+    name = forms.CharField(label='Group name', max_length=50)
 
     class Meta:
         model = Group
         fields = ('name',)
 
 class AddUserToGroupForm(forms.Form):
-    username = forms.CharField(label='Username', autocomplete='off')
+    username = forms.CharField(label='Username')
 
 class SiteManagerForm(forms.Form):
-    username = forms.CharField(label='Username', autocomplete='off')
-    group = forms.CharField(label='Group', required=False, autocomplete='off')
+    username = forms.CharField(label='Username')
+    group = forms.CharField(label='Group', required=False)
