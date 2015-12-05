@@ -35,50 +35,59 @@ def home(request):
 @user_passes_test(lambda u: u.is_active)
 def reports(request):
     reports = Report.objects.filter(owner=request.user)
+    can_submit_report = request.user.has_perm('securecontactapp.add_report')
+    error = None
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = ReportForm(request.POST, request.FILES)
         if 'report' in request.POST:
             # check whether it's valid:
-            if form.is_valid():
-                text = form.cleaned_data['report_body']
-                keyword = form.cleaned_data['report_keyword']
-                description = form.cleaned_data['report_description']
-                private = form.cleaned_data['report_is_private']
-                encrypted = form.cleaned_data['report_is_encrypted']
+            if not request.user.has_perm('securecontactapp.add_report'):
+                error = 'you do not have permission to submit reports'
+            elif form.is_valid():
+                report = form.save(commit=False)
+                report.owner = request.user
+                if report.folder != None and report.folder.owner != request.user:
+                    report.folder = None
                 # TODO: if encrypted == True... encrypt the file(s) in a similar manner to how message encryption was done below
-                r = Report(owner=request.user, description=description, keyword=keyword, text=text, private=private, encrypted=encrypted)
-                r.save()
+                report.save()
                 for fn in request.FILES:
-                    f = File(file=request.FILES[fn], attached_to=r)
+                    f = File(file=request.FILES[fn], attached_to=report)
                     f.save()
-                # refresh page
-                return HttpResponseRedirect('')
             else:
-                return HttpResponse('Form not valid')
+                error = 'form not valid'
         elif 'delete' in request.POST: 
             for d in request.POST.getlist('del'): 
-                r = Report.objects.get(id=d) 
-                r.delete()
-        elif 'new_folder' in request.POST:
-            # TODO: make new folder and put selected reports in it 
-            pass
+                r = Report.objects.filter(owner=request.user, id=d) 
+                if r.exists():
+                    r.get().delete()
         elif 'move_to_folder' in request.POST:
-            # TODO: move selected to existing folder
-            pass
+            folder = Folder.objects.filter(owner=request.user, id=request.POST['move_to_folder'])
+            if folder.exists():
+                folder = folder.get()
+            else:
+                folder = None
+            for d in request.POST.getlist('del'): 
+                r = Report.objects.filter(owner=request.user, id=d) 
+                if r.exists():
+                    r = r.get()
+                    r.folder = folder
+                    r.save(update_fields=['folder'])
     else:
         form = ReportForm()
-    form.fields['report_folder'].queryset = Folder.objects.filter(owner=request.user)
+    form.fields['folder'].queryset = Folder.objects.filter(owner=request.user)
 
     reports = Report.objects.filter(owner=request.user)
     
     if 'visibility' in request.GET:
         reports = reports.filter(private=(request.GET['visibility'] == 'private'))
     if 'folder' in request.GET:
-        folder = Folder.objects.filter(owner=request.user, name=request.GET['folder'])
+        folder = Folder.objects.filter(owner=request.user, id=request.GET['folder'])
         if folder.exists():
             reports = reports.filter(folder=folder.get())
+        else:
+            reports = reports.filter(folder=None)
 
     reports_and_files = []
     for report in reports:
@@ -86,7 +95,8 @@ def reports(request):
         report = (report,files)
         reports_and_files.append(report)
     folders = Folder.objects.filter(owner=request.user)
-    context = {'form': form, 'reports': reports_and_files, 'folders': folders}
+    context = {'form': form, 'reports': reports_and_files, 'folders': folders,
+            'error': error, 'can_submit_report': can_submit_report}
     return render(request, 'reports.html', context)
     
 @login_required
@@ -191,6 +201,7 @@ def registration(request):
             # And make a Reporter object that adds data to our User object
             reporter = Reporter(user=usr,publickey=public,privatekey=private)
             reporter.save()
+            usr.user_permissions.add('securecontactapp.add_report')
             return HttpResponseRedirect(resolve_url(settings.LOGIN_URL))
     else:
         form = UserCreationForm()
@@ -273,12 +284,14 @@ def search(request):
                 regex = r'\y%s\y' % term[1:]
                 desc_matches = reports.exclude(description__iregex=regex)
                 text_matches = reports.exclude(text__iregex=regex)
-                reports = desc_matches & text_matches
+                keyword_matches = reports.exclude(keyword__iregex=regex)
+                reports = desc_matches & text_matches & keyword_matches
             else:
                 regex = r'\y%s\y' % term
                 desc_matches = reports.filter(description__iregex=regex)
                 text_matches = reports.filter(text__iregex=regex)
-                reports = desc_matches | text_matches
+                keyword_matches = reports.filter(keyword__iregex=regex)
+                reports = desc_matches | text_matches & keyword_matches
 
     reports_and_files = []
     for report in reports:

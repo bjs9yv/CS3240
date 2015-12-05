@@ -57,14 +57,16 @@ class MessageForm(forms.Form):
     message_body = forms.CharField(widget=forms.Textarea, label='Type your message here')
     encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypt this message?', required=False)
 
-class ReportForm(forms.Form):
-    report_description = forms.CharField(label='Description', max_length=80, required=True)
-    report_keyword = forms.CharField(label='Keyword', max_length=15,required=False)
-    report_body = forms.CharField(widget=forms.Textarea, label='Type your report here')
-    report_files = MultiFileField()
-    report_is_private = forms.BooleanField(widget=widgets.CheckboxInput, label='Private', required=False)
-    report_is_encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypted', required=False)
-    report_folder = forms.ModelChoiceField(queryset=Folder.objects.none(), label='Folder', required=False)
+class ReportForm(forms.ModelForm):
+    files = MultiFileField()
+
+    class Meta:
+        model = Report
+        fields = ('description', 'keyword', 'text', 'folder', 'private', 'encrypted')
+        widgets = {
+                'description': None,
+                'keyword': None,
+            }
 
 class FolderForm(forms.ModelForm):
     class Meta:
