@@ -281,13 +281,13 @@ def search(request):
                 regex = r'\y%s\y' % term[1:]
                 desc_matches = reports.exclude(description__iregex=regex)
                 text_matches = reports.exclude(text__iregex=regex)
-                keyword_matches = reports.exclude(text__iregex=regex)
+                keyword_matches = reports.exclude(keyword__iregex=regex)
                 reports = desc_matches & text_matches & keyword_matches
             else:
                 regex = r'\y%s\y' % term
                 desc_matches = reports.filter(description__iregex=regex)
                 text_matches = reports.filter(text__iregex=regex)
-                keyword_matches = reports.filter(text__iregex=regex)
+                keyword_matches = reports.filter(keyword__iregex=regex)
                 reports = desc_matches | text_matches & keyword_matches
 
     reports_and_files = []
