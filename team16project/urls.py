@@ -1,5 +1,8 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = patterns('',
     # Examples:
@@ -18,5 +21,6 @@ urlpatterns = patterns('',
     url(r'^register/$', 'securecontactapp.views.registration', name='register'),
     url(r'^check_login/$', 'securecontactapp.views.check_login', name='check_login'),
     url(r'^humans/$', 'securecontactapp.views.humans', name='humans'),
+    url(r'^download/$', 'securecontactapp.views.download', name='download'),
     url(r'^site_manager/$', 'securecontactapp.views.site_manager', name='site_manager'),
-)
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

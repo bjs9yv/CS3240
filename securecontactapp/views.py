@@ -11,6 +11,9 @@ from django.template.response import TemplateResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.db.models.signals import post_save
+from django.core.servers.basehttp import FileWrapper
+from django.views.static import serve
+
 
 from .forms import MessageForm, ReportForm, SiteManagerForm, GroupForm, AddUserToGroupForm, FolderForm
 from .models import Message, Report, File, Reporter, Folder
@@ -298,3 +301,4 @@ def folder(request):
     form.fields['parent'].queryset = Folder.objects.filter(owner=request.user)
     context = {'form': form}
     return render(request, 'folder.html', context)
+
