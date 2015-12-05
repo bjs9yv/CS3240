@@ -64,7 +64,7 @@ class ReportForm(forms.Form):
     report_files = MultiFileField()
     report_is_private = forms.BooleanField(widget=widgets.CheckboxInput, label='Private', required=False)
     report_is_encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypted', required=False)
-    report_folder = forms.ModelChoiceField(queryset=Folder.objects.none(), label='Folder')
+    report_folder = forms.ModelChoiceField(queryset=Folder.objects.all(), label='Folder', required=False)
 
 class FolderForm(forms.ModelForm):
     class Meta:
