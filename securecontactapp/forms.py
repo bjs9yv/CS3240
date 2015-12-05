@@ -53,8 +53,8 @@ class MultiFileField(forms.FileField):
         return True
 
 class MessageForm(forms.Form):
-    message_recipient = forms.CharField(label='Send to', max_length=30)
-    message_body = forms.CharField(widget=forms.Textarea, label='Type your message here')
+    message_recipient = forms.CharField(label='Send to', max_length=30, autocomplete='off')
+    message_body = forms.CharField(widget=forms.Textarea, label='Type your message here', autocomplete='off')
     encrypted = forms.BooleanField(widget=widgets.CheckboxInput, label='Encrypt this message?', required=False)
 
 class ReportForm(forms.ModelForm):
@@ -74,15 +74,15 @@ class FolderForm(forms.ModelForm):
         fields = ('name', 'parent')
     
 class GroupForm(forms.ModelForm):
-    name = forms.CharField(label='Group name', max_length=50)
+    name = forms.CharField(label='Group name', max_length=50, autocomplete='off')
 
     class Meta:
         model = Group
         fields = ('name',)
 
 class AddUserToGroupForm(forms.Form):
-    username = forms.CharField(label='Username')
+    username = forms.CharField(label='Username', autocomplete='off')
 
 class SiteManagerForm(forms.Form):
-    username = forms.CharField(label='Username')
-    group = forms.CharField(label='Group', required=False)
+    username = forms.CharField(label='Username', autocomplete='off')
+    group = forms.CharField(label='Group', required=False, autocomplete='off')
