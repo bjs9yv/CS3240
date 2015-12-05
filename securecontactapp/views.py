@@ -19,6 +19,7 @@ from .forms import MessageForm, ReportForm, SiteManagerForm, GroupForm, AddUserT
 from .models import Message, Report, File, Reporter, Folder
 
 import os
+import re
 from base64 import b64encode, b64decode
 from Crypto import Random
 from Crypto.PublicKey import RSA
@@ -279,19 +280,26 @@ def search(request):
     reports |= Report.objects.filter(owner=request.user)
 
     if 'q' in request.GET:
-        for term in request.GET['q'].split():
-            if term[0] == '-':
-                regex = r'\y%s\y' % term[1:]
-                desc_matches = reports.exclude(description__iregex=regex)
-                text_matches = reports.exclude(text__iregex=regex)
-                keyword_matches = reports.exclude(keyword__iregex=regex)
-                reports = desc_matches & text_matches & keyword_matches
-            else:
-                regex = r'\y%s\y' % term
-                desc_matches = reports.filter(description__iregex=regex)
-                text_matches = reports.filter(text__iregex=regex)
-                keyword_matches = reports.filter(keyword__iregex=regex)
-                reports = desc_matches | text_matches | keyword_matches
+        if len(request.GET['q']) >= 2 and request.GET['q'][0] == '/' and request.GET['q'][-1] == '/':
+            regex = request.GET['q'][1:-1]
+            desc_matches = reports.filter(description__regex=regex)
+            text_matches = reports.filter(text__regex=regex)
+            keyword_matches = reports.filter(keyword__regex=regex)
+            reports = desc_matches | text_matches | keyword_matches
+        else:
+            for term in request.GET['q'].split():
+                if term[0] == '-':
+                    regex = r'\y%s\y' % term[1:]
+                    desc_matches = reports.exclude(description__iregex=regex)
+                    text_matches = reports.exclude(text__iregex=regex)
+                    keyword_matches = reports.exclude(keyword__iregex=regex)
+                    reports = desc_matches & text_matches & keyword_matches
+                else:
+                    regex = r'\y%s\y' % term
+                    desc_matches = reports.filter(description__iregex=regex)
+                    text_matches = reports.filter(text__iregex=regex)
+                    keyword_matches = reports.filter(keyword__iregex=regex)
+                    reports = desc_matches | text_matches | keyword_matches
 
     reports_and_files = []
     for report in reports:
