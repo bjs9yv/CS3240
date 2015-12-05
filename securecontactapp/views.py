@@ -288,7 +288,7 @@ def search(request):
                 desc_matches = reports.filter(description__iregex=regex)
                 text_matches = reports.filter(text__iregex=regex)
                 keyword_matches = reports.filter(keyword__iregex=regex)
-                reports = desc_matches | text_matches & keyword_matches
+                reports = desc_matches | text_matches | keyword_matches
 
     reports_and_files = []
     for report in reports:
