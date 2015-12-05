@@ -223,6 +223,21 @@ def check_login(request):
 
     return JsonResponse({'valid': valid})
 
+@sensitive_post_parameters('username', 'password')
+def get_reports(request):
+    if 'username' in request.GET and 'password' in request.GET:
+        user = User.objects.filter(username=request.GET['username'])
+        if user.exists() and user.get().check_password(request.GET['password']):
+            reports = Report.objects.filter(owner=user)
+            all_reports = []
+            for report in reports:
+                report_info_and_files = {}
+                report_info_and_files['description'] = report.description
+                report_info_and_files['text'] = report.text
+                report_info_and_files['files'] = list(map(lambda f: f.file.url, File.objects.filter(attached_to=report)))
+                all_reports.append(report_info_and_files)
+            return JsonResponse({'reports': all_reports})
+    return JsonResponse({})
 def humans(request):
     with open('/app/team16project/static/humans.txt', 'r') as f:
         return HttpResponse(f.read())

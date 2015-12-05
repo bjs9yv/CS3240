@@ -21,5 +21,6 @@ urlpatterns = patterns('',
     url(r'^register/$', 'securecontactapp.views.registration', name='register'),
     url(r'^check_login/$', 'securecontactapp.views.check_login', name='check_login'),
     url(r'^humans/$', 'securecontactapp.views.humans', name='humans'),
+    url(r'^get_reports/$', 'securecontactapp.views.get_reports', name='get_reports'),
     url(r'^site_manager/$', 'securecontactapp.views.site_manager', name='site_manager'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
