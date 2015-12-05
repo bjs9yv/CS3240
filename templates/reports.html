@@ -8,14 +8,14 @@
 
 {% if can_submit_report %}
 <h2>Submit a Report</h2>
-<form action="" method="POST" enctype="multipart/form-data">
+<form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
     {% csrf_token %}
     {{ form.as_p }}
     <p><input type="submit" value="Submit" name="report" /> </p>
     <br><br>
 </form>
 {% endif %}
-<form action="" method="GET">
+<form action="" method="GET" autocomplete="off">
     <h1>My Reports</h1>
     <table>
         <tr>
@@ -40,7 +40,7 @@
     </table>
 </form>
 <br>
-<form action="" method="POST">
+<form action="" method="POST" autocomplete="off">
     {% csrf_token %}
     <input type="submit" name="delete" value="Delete selected"/>
     Move to Existing Folder: 
@@ -66,7 +66,7 @@
       <b>File(s) are Encrypted: </b> {{ report.encrypted }}<br>
       <b>Files: </b>
       {% for file in files %}
-	<form action="" method="GET">
+	<form action="" method="GET" autocomplete="off">
 	  {% if report.encrypted %}
 	      <p title="Use the Standalone Application to download and/or decrypt this file">{{ file.file.name }}</p>
 	  {% else %}
