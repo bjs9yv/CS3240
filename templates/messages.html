@@ -3,7 +3,7 @@
 {% block content %}
 
 <h2>Send a message</h2>
-<form action="" method="POST">
+<form action="" method="POST" autocomplete="off">
     {% csrf_token %}
     <p> {{form.message_recipient.label }}
     <br> {{ form.message_recipient }} </p>

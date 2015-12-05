@@ -12,7 +12,7 @@
             <li>{{user}}</li>
          {% endfor %}
        </ul>
-        <form action="" method="POST">
+        <form action="" method="POST" autocomplete="off">
            {% csrf_token %}
            {{ addForm.as_p }}
            <input type='submit' value='Add User' name='add {{ group }}'/>
@@ -20,7 +20,7 @@
 {% endfor %}
 
 <p><h1> create a new group </h1></p>
-<form action="" method="POST">
+<form action="" method="POST" autocomplete="off">
     {% csrf_token %}
     {{ form.as_p }}
     <input type='submit' value='Create' name='create'/>
