@@ -51,7 +51,6 @@ def reports(request):
                 report.owner = request.user
                 if report.folder != None and report.folder.owner != request.user:
                     report.folder = None
-                # TODO: if encrypted == True... encrypt the file(s) in a similar manner to how message encryption was done below
                 report.save()
                 # fuck django
                 for g in request.POST.getlist('group'):
@@ -164,9 +163,6 @@ def groups(request):
             form = GroupForm(data=request.POST)
             if form.is_valid():
                 new_group = form.save()
-                # TODO: group names are unique
-                #if Group.objects.get(name=new_group.name):
-                   # return HttpResponse('Group already exists')
                 request.user.groups.add(new_group)
             else:
                 return HttpResponse('Group already exists')
@@ -255,6 +251,11 @@ def user_is_site_manager(user):
 @csrf_protect
 def site_manager(request):
     if request.method == 'POST':
+        if 'delete' in request.POST: 
+            for d in request.POST.getlist('del'):
+                r = Report.objects.filter(id=d)
+                r.delete()
+                
         form = SiteManagerForm(data=request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
@@ -285,7 +286,13 @@ def site_manager(request):
                 user.save()
     else:
         form = SiteManagerForm()
-    context = {'form': form}
+    all_reports = Report.objects.all()
+    reports = []
+    for report in all_reports:
+        files = File.objects.filter(attached_to=report)
+        report = (report,files)
+        reports.append(report)
+    context = {'form': form, 'reports': reports}
     return render(request, 'sitemanager.html', context)
 
 @login_required()
