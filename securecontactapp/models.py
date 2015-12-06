@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 # User-submitted Reports
 class Report(models.Model):
@@ -11,6 +11,7 @@ class Report(models.Model):
     keyword = models.TextField(null=True, blank=True)
     text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    group = models.ManyToManyField(Group)
     
 # Folders to hold other Reports
 class Folder(models.Model):
@@ -49,12 +50,3 @@ class Reporter(models.Model):
     user = models.OneToOneField(User)
     publickey = models.TextField()
     privatekey = models.TextField()
-
-
-class ReporterGroup(models.Model):
-    # NOTE: ACCORDING TO SPECS, GROUP NAMES SHOULD BE UNIQUE
-    name = models.TextField()
-    owner = models.ForeignKey(User)
-    # group = models.ForeignKey(Group)
-    is_hidden = models.BooleanField()
-    members_can_invite = models.BooleanField()
