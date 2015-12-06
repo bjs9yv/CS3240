@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.forms import widgets
 from django.contrib.auth.models import Group
-from .models import Folder, Report
+from .models import Folder, Report, File
 
 # From http://koensblog.eu/blog/7/multiple-file-upload-django/
 class MultiFileInput(forms.FileInput):
@@ -78,10 +78,40 @@ class ReportForm(forms.ModelForm):
                 'keyword': None,
             }
 
+    def __init__(self, user, *args, **kwargs):
+        super(ReportForm, self).__init__(*args, **kwargs)
+        self.fields['folder'].queryset = Folder.objects.filter(owner=user)
+        self.fields['group'].queryset = user.groups.all()
+        self.instance.owner = user
+
+    def save_files(self):
+        for f in self.cleaned_data['files']:
+            File(file=f, attached_to=self.instance).save()
+
+    def save(self, commit=True):
+        r = super(ReportForm, self).save(commit=commit)
+        if commit:
+            self.save_files()
+        else:
+            raise Exception('how to m2m')
+        return r
+
 class FolderForm(forms.ModelForm):
     class Meta:
         model = Folder
         fields = ('name', 'parent')
+
+    def __init__(self, user, *args, **kwargs):
+        super(FolderForm, self).__init__(*args, **kwargs)
+        self.fields['parent'].queryset = Folder.objects.filter(owner=user)
+        self.user = user
+
+    def save(self, commit=True):
+        f = super(FolderForm, self).save(commit=False)
+        f.owner = self.user
+        if commit:
+            f.save()
+        return f
     
 class GroupForm(forms.ModelForm):
     name = forms.CharField(label='Group name', max_length=50)

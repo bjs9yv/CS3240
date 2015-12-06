@@ -1,0 +1,17 @@
+{% extends "userbase.html" %}
+
+{% block content %}
+
+{% if error %}
+    <p>{{ error }}</p>
+{% endif %}
+
+<h2>Submit a Report</h2>
+<form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <p><input type="submit" value="Submit" name="report" /> </p>
+    <br><br>
+</form>
+
+{% endblock %}

@@ -51,15 +51,16 @@
         <option value="{{ folder.id }}">{{ folder }}</option>
       {% endfor %}
     </select>
-    <!-- <input type="submit" name="new_folder" value="Move Selected to New Folder: " title="Specify a new foldername, then press this button"/> -->
     <br><br><hr>
     {% for report, files in reports %}
-      <input type="checkbox" name="del" value="{{ report.id }}"/>
-      <p><b>Owner: </b> {{ report.owner }}<br>
+      <table><tr><td><input type="checkbox" name="del" value="{{ report.id }}"/></td>
+            <td><a href="edit/{{ report.id }}/">edit</a></td></tr></table>
+      <b>Owner: </b> {{ report.owner }}<br>
       <!-- Replace with DateTimeStamp -->
       <b>Created: </b> {{ report.timestamp }}<br>
       <b>Keyword: </b> {{ report.keyword }}<br>
-      <b>Group(s): </b> <ul> {% for group in report.group.all %} <li>{{ group }}</li> {% endfor %}</ul>
+      <b>Group(s): </b>
+      <ul style="margin:0px;"> {% for group in report.group.all %} <li>{{ group }}</li> {% endfor %}</ul>
       <b>Description: </b> {{ report.description }}<br>
       <b>Body: </b> {{ report.text }}<br>
       <b>Folder: </b> {% if report.folder %} {{ report.folder }} {% else %} / {% endif %}<br>
@@ -67,13 +68,13 @@
       <b>File(s) are Encrypted: </b> {{ report.encrypted }}<br>
       <b>Files: </b>
       {% for file in files %}
-	<form action="" method="GET" autocomplete="off">
+      {% if file.file %}
 	  {% if report.encrypted %}
 	      <p title="Use the Standalone Application to download and/or decrypt this file">{{ file.file.name }}</p>
 	  {% else %}
 	      <a href="{{file.file.url}}">{{ file.file.name }}</a>
 	  {% endif %}
-	 </form>
+      {% endif %}
       {% endfor%}
       </a>
       <hr>
