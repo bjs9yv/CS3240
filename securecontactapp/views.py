@@ -75,9 +75,9 @@ def reports(request):
                     r = r.get()
                     r.folder = folder
                     r.save(update_fields=['folder'])
-    else:
-        form = ReportForm()
+    form = ReportForm()
     form.fields['folder'].queryset = Folder.objects.filter(owner=request.user)
+    form.fields['group'].queryset = request.user.groups
 
     reports = Report.objects.filter(owner=request.user)
     
