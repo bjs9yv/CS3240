@@ -69,11 +69,10 @@ class MessageForm(forms.Form):
 
 class ReportForm(forms.ModelForm):
     files = MultiFileField()
-    group = forms.ModelMultipleChoiceField(queryset=Group.objects.all())
 
     class Meta:
         model = Report
-        fields = ('description', 'keyword', 'text', 'folder', 'private', 'encrypted')
+        fields = ('description', 'keyword', 'text', 'folder', 'private', 'encrypted', 'share_group')
         widgets = {
                 'description': None,
                 'keyword': None,
