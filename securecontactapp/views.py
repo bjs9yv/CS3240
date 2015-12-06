@@ -53,6 +53,10 @@ def reports(request):
                     report.folder = None
                 # TODO: if encrypted == True... encrypt the file(s) in a similar manner to how message encryption was done below
                 report.save()
+                # fuck django
+                for g in request.POST.getlist('group'):
+                    report.group.add(Group.objects.get(id=g))
+                report.save()
                 for fn in request.FILES:
                     f = File(file=request.FILES[fn], attached_to=report)
                     f.save()
