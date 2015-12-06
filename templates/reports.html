@@ -51,6 +51,7 @@
         <option value="{{ folder.id }}">{{ folder }}</option>
       {% endfor %}
     </select>
+    <a href="{% url 'folder' %}">Create New Folder</a>
     <br><br><hr>
     {% for report, files in reports %}
       <table><tr><td><input type="checkbox" name="del" value="{{ report.id }}"/></td>
