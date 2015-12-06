@@ -72,7 +72,7 @@ class ReportForm(forms.ModelForm):
 
     class Meta:
         model = Report
-        fields = ('description', 'keyword', 'text', 'folder', 'private', 'encrypted', 'share_group')
+        fields = ('description', 'keyword', 'text', 'folder', 'private', 'encrypted', 'group')
         widgets = {
                 'description': None,
                 'keyword': None,
