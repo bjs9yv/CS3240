@@ -297,6 +297,8 @@ def search(request):
         reports = reports.filter(private=False)
     # But show user's own private reports
     reports |= Report.objects.filter(owner=request.user)
+    # Show group reports
+    reports |= Report.objects.filter(group__in=request.user.groups.all())
 
     if 'q' in request.GET:
         if len(request.GET['q']) >= 2 and request.GET['q'][0] == '/' and request.GET['q'][-1] == '/':
