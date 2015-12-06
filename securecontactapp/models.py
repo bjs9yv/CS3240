@@ -11,7 +11,7 @@ class Report(models.Model):
     keyword = models.TextField(null=True, blank=True)
     text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
-    group = models.ManyToManyField(Group, default="No Group")
+    group = models.ForeignKey(Group, null=True, blank=True)
     
 # Folders to hold other Reports
 class Folder(models.Model):
