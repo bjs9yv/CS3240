@@ -2,6 +2,12 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth.models import User, Group, Permission
+
+from securecontactapp.models import Reporter
+
+from Crypto import Random
+from Crypto.PublicKey import RSA
 
 
 urlpatterns = patterns('',
@@ -25,3 +31,20 @@ urlpatterns = patterns('',
     url(r'^get_reports/$', 'securecontactapp.views.get_reports', name='get_reports'),
     url(r'^site_manager/$', 'securecontactapp.views.site_manager', name='site_manager'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if not User.objects.filter(username='admin').exists():
+    admin = User(username='admin', password='hunter2').save()
+    # In addition to creating an account we will also generate keypair
+    g = Random.new().read
+    key = RSA.generate(2048, g)
+    private = key.exportKey(format="PEM")
+    public = key.publickey().exportKey(format="PEM")
+    # And make a Reporter object that adds data to our User object
+    reporter = Reporter(user=usr,publickey=public,privatekey=private)
+    reporter.save()
+    permission = Permission.objects.get(codename='add_report')
+    usr.user_permissions.add(permission)
+
+    # Make the site manager group
+    sm = Group(name='Site Manager')
+    admin.groups.add(sm)
