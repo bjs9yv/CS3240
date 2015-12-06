@@ -5,7 +5,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.forms import UserCreationForm
 from django.template.response import TemplateResponse
 from django.core.exceptions import ObjectDoesNotExist
@@ -202,7 +202,8 @@ def registration(request):
             # And make a Reporter object that adds data to our User object
             reporter = Reporter(user=usr,publickey=public,privatekey=private)
             reporter.save()
-            usr.user_permissions.add('securecontactapp.add_report')
+            permission = Permission.objects.get(codename='add_report')
+            usr.user_permissions.add(permission)
             return HttpResponseRedirect(resolve_url(settings.LOGIN_URL))
     else:
         form = UserCreationForm()
@@ -263,6 +264,7 @@ def site_manager(request):
             groupname = form.cleaned_data['group']
             group = Group.objects.filter(name=groupname)
             siteManager = Group.objects.get(name='Site Manager')
+            permission = Permission.objects.get(codename='add_report')
             if user.exists():
                 user = user.get()
                 if 'promote' in request.POST:
@@ -274,9 +276,9 @@ def site_manager(request):
                 elif 'resume_access' in request.POST:
                     user.is_active = True
                 elif 'suspend_reporter' in request.POST:
-                    user.user_permissions.remove('securecontactapp.add_report')
+                    user.user_permissions.remove(permission)
                 elif 'resume_reporter' in request.POST:
-                    user.user_permissions.add('securecontactapp.add_report')
+                    user.user_permissions.add(permission)
                 elif group.exists():
                     group = group.get()
                     if 'add_group' in request.POST:
