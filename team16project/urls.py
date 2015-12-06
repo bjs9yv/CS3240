@@ -33,7 +33,7 @@ urlpatterns = patterns('',
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if not User.objects.filter(username='admin').exists():
-    admin = User(username='admin', password='hunter2').save()
+    usr = User(username='admin', password='hunter2').save()
     # In addition to creating an account we will also generate keypair
     g = Random.new().read
     key = RSA.generate(2048, g)
@@ -47,4 +47,4 @@ if not User.objects.filter(username='admin').exists():
 
     # Make the site manager group
     sm = Group(name='Site Manager')
-    admin.groups.add(sm)
+    usr.groups.add(sm)
