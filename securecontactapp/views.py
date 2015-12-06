@@ -77,7 +77,7 @@ def reports(request):
                     r.save(update_fields=['folder'])
     form = ReportForm()
     form.fields['folder'].queryset = Folder.objects.filter(owner=request.user)
-    form.fields['group'].queryset = request.user.groups
+    form.fields['share_group'].queryset = request.user.groups
 
     reports = Report.objects.filter(owner=request.user)
     
