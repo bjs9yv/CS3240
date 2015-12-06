@@ -10,7 +10,7 @@ class Report(models.Model):
     description = models.TextField()
     keyword = models.TextField(null=True, blank=True)
     text = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now=True)
     group = models.ManyToManyField(Group, blank=True)
     
 # Folders to hold other Reports

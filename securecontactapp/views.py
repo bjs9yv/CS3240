@@ -1,17 +1,17 @@
 from django.conf import settings
-from django.shortcuts import render, resolve_url
-from django.http import HttpResponseRedirect, JsonResponse
-from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_protect
-from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User, Group, Permission
 from django.contrib.auth.forms import UserCreationForm
-from django.template.response import TemplateResponse
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse
-from django.db.models.signals import post_save
 from django.core.servers.basehttp import FileWrapper
+from django.core.urlresolvers import reverse
+from django.db.models.signals import post_save
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.shortcuts import render, resolve_url
+from django.template.response import TemplateResponse
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.static import serve
 
 
@@ -41,24 +41,13 @@ def reports(request):
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        form = ReportForm(request.POST, request.FILES)
+        form = ReportForm(request.user, request.POST, request.FILES)
         if 'report' in request.POST:
             # check whether it's valid:
             if not request.user.has_perm('securecontactapp.add_report'):
                 error = 'you do not have permission to submit reports'
             elif form.is_valid():
-                report = form.save(commit=False)
-                report.owner = request.user
-                if report.folder != None and report.folder.owner != request.user:
-                    report.folder = None
-                report.save()
-                # fuck django
-                for g in request.POST.getlist('group'):
-                    report.group.add(Group.objects.get(id=g))
-                report.save()
-                for fn in request.FILES:
-                    f = File(file=request.FILES[fn], attached_to=report)
-                    f.save()
+                report = form.save()
             else:
                 error = 'form not valid'
         elif 'delete' in request.POST: 
@@ -78,9 +67,7 @@ def reports(request):
                     r = r.get()
                     r.folder = folder
                     r.save(update_fields=['folder'])
-    form = ReportForm()
-    form.fields['folder'].queryset = Folder.objects.filter(owner=request.user)
-    form.fields['group'].queryset = request.user.groups
+    form = ReportForm(request.user)
 
     reports = Report.objects.filter(owner=request.user)
     
@@ -102,6 +89,25 @@ def reports(request):
     context = {'form': form, 'reports': reports_and_files, 'folders': folders,
             'error': error, 'can_submit_report': can_submit_report}
     return render(request, 'reports.html', context)
+
+@login_required
+@user_passes_test(lambda u: u.is_active)
+def edit_report(request, ID):
+    report = Report.objects.filter(id=ID)
+    if not user_is_site_manager(request.user):
+        report = report.filter(owner=request.user)
+    if not report.exists() or not request.user.has_perm('securecontactapp.add_report'):
+        return HttpResponseRedirect(reverse('reports'))
+    error = None
+
+    if request.method == 'POST':
+        form = ReportForm(request.user, request.POST, request.FILES, instance=report.get())
+        form.save()
+        return HttpResponseRedirect(reverse('reports'))
+
+    form = ReportForm(request.user, instance=report.get())
+    context = {'form': form, 'error': error}
+    return render(request, 'edit_report.html', context)
     
 @login_required
 @user_passes_test(lambda u: u.is_active)
@@ -204,7 +210,7 @@ def registration(request):
             reporter.save()
             permission = Permission.objects.get(codename='add_report')
             usr.user_permissions.add(permission)
-            return HttpResponseRedirect(resolve_url(settings.LOGIN_URL))
+            return HttpResponseRedirect(settings.LOGIN_URL)
     else:
         form = UserCreationForm()
 
@@ -344,12 +350,8 @@ def search(request):
 def folder(request):
     if request.method == 'POST':
         form = FolderForm(request.POST)
-        folder = form.save(commit=False)
-        folder.owner = request.user
-        folder.save()
-    else:
-        form = FolderForm()
-    form.fields['parent'].queryset = Folder.objects.filter(owner=request.user)
+        folder = form.save()
+    form = FolderForm()
     context = {'form': form}
     return render(request, 'folder.html', context)
 
