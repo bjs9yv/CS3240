@@ -46,7 +46,7 @@
 	<form action="" method="GET" autocomplete="off">
 	  {% if report.encrypted %}
 	      <p title="Use the Standalone Application to download and/or decrypt this file">{{ file.file.name }}</p>
-	  {% else %}
+	  {% elif file.file %}
 	      <a href="{{file.file.url}}">{{ file.file.name }}</a>
 	  {% endif %}
 	 </form>
