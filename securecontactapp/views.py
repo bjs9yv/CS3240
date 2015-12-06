@@ -349,7 +349,7 @@ def search(request):
 @user_passes_test(lambda u: u.is_active)
 def folder(request):
     if request.method == 'POST':
-        form = FolderForm(request.POST)
+        form = FolderForm(request.user, request.POST)
         folder = form.save()
     form = FolderForm(request.user)
     context = {'form': form}
