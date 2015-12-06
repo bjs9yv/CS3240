@@ -351,7 +351,7 @@ def folder(request):
     if request.method == 'POST':
         form = FolderForm(request.POST)
         folder = form.save()
-    form = FolderForm()
+    form = FolderForm(request.user)
     context = {'form': form}
     return render(request, 'folder.html', context)
 
