@@ -7,6 +7,7 @@ import getpass
 import requests
 import re
 from Crypto import Random
+from tkinter import filedialog
 
 class SecureContactClient(Frame):
 	def __init__(self, parent):
@@ -51,7 +52,9 @@ class SecureContactClient(Frame):
 		self.centerWindow(w=self.loginFrame.winfo_width(), h=self.loginFrame.winfo_height())
 
 	def grabDeets(self):
-		passdic = {'username':self.loginFrame.loginEntry.get(),'password':self.loginFrame.passEntry.get()}
+		self.usn = self.loginFrame.loginEntry.get()
+		self.pwd = self.loginFrame.passEntry.get()
+		passdic = {'username':self.usn,'password':self.pwd}
 		response = requests.get('http://t16-heroku-app.herokuapp.com/check_login/', params=passdic)
 		if response.json()['valid']:
 			temp = False
@@ -150,18 +153,29 @@ class SecureContactClient(Frame):
 		pullingReportsText.config(bg='#f95252', bd=5, width=250, relief=RIDGE)
 		pullingReportsText.grid(row=1, column=0)
 
-		self.viewReportsFrame.reports = ["file.txt", "trapqueen.wapp", "wahoo.wa", "hortonhearsa.hoo"]
-		reportListFrame = Frame(self.viewReportsFrame, background='#c0c0c0')
-		reportListFrame.grid(row=2, column=0)
-		for i in range(0, len(self.viewReportsFrame.reports)):
-			iText = Message(reportListFrame, text=i+1)
-			reportText = Message(reportListFrame, text=self.viewReportsFrame.reports[i])
-			reportButton = Button(reportListFrame, text="Download", command= lambda i=i: self.storeReportAt(i))
-			iText.config(bg='#7ec0ee', bd=5, width=50, relief=RAISED)
-			reportText.config(bg='#7ec0ee', bd=5, width=200, relief=RAISED)
-			iText.grid(row=i, column=0)
-			reportText.grid(row=i, column=1)
-			reportButton.grid(row=i, column=2)
+		passdic = {'username':self.usn,'password':self.pwd}
+		response = requests.get('http://t16-heroku-app.herokuapp.com/get_reports/', params=passdic)
+		if len(response.json()['reports']) == 0:
+			noReportsTest = Message(self.viewReportsFrame, text="No reports found on the server.")
+			noReportsTest.config(bg='#f95252', bd=5, width=200, relief=RIDGE)
+			noReportsTest.grid(row=2, column=0)
+		else:
+			self.viewReportsFrame.reports = []
+			for item in response.json()['reports']:
+				self.viewReportsFrame.reports.append([item['description'], item['text'], item['files']])
+
+			reportListFrame = Frame(self.viewReportsFrame, background='#c0c0c0')
+			reportListFrame.grid(row=2, column=0)
+
+			for i in range(0, len(self.viewReportsFrame.reports)):
+				iText = Message(reportListFrame, text=i+1)
+				reportText = Message(reportListFrame, text=self.viewReportsFrame.reports[i][0])
+				reportButton = Button(reportListFrame, text="Download", command= lambda i=i: self.storeReportAt(i))
+				iText.config(bg='#7ec0ee', bd=5, width=50, relief=RAISED)
+				reportText.config(bg='#7ec0ee', bd=5, width=200, relief=RAISED)
+				iText.grid(row=i, column=0)
+				reportText.grid(row=i, column=1)
+				reportButton.grid(row=i, column=2)
 
 		self.viewReportsFrame.update()
 		self.centerWindow(w=self.viewReportsFrame.winfo_width(), h=self.viewReportsFrame.winfo_height())
@@ -175,7 +189,7 @@ class SecureContactClient(Frame):
 		self.downloadFrame.pack(fill=BOTH, expand=1)
 		self.downloadFrame.dl_file = temp
 
-		dlFileText = Message(self.downloadFrame, text=self.downloadFrame.dl_file + " selected to download.")
+		dlFileText = Message(self.downloadFrame, text=self.downloadFrame.dl_file[0] + " selected to download.")
 		dlFileText.config(bg='#f95252', bd=5, width=300, relief=RIDGE)
 		dlFileText.grid(row=0, column=0)
 
@@ -198,8 +212,18 @@ class SecureContactClient(Frame):
 		self.downloadFrame.update()
 		self.centerWindow(w=self.downloadFrame.winfo_width(), h=self.downloadFrame.winfo_height())
 
-	def downloadReport(self):
-		path = self.downloadFrame.fileLocationEntry.get()
+	def downloadReport(self, browsedDir=None):
+		# Go to website endpoint and download actual file???
+		path = ""
+		if self.downloadFrame.winfo_exists() == 1:
+			path = self.downloadFrame.fileLocationEntry.get()
+		else:
+			if not browsedDir == None:
+				path = browsedDir
+			else:
+				self.downloadFrame.destroy()
+				self.parent.geometry("")
+				self.initViewReports()
 		if len(path) == 0:
 			self.parent.geometry("")
 			noPathText = Message(self.downloadFrame, text="Please enter a path location to store the file at.")
@@ -213,8 +237,8 @@ class SecureContactClient(Frame):
 			if not path[len(path) - 1] == '/':
 				path += '/'
 			try:
-				f = open(path + self.downloadFrame.dl_file, 'w')
-				f.write("file_content") # Yea....
+				f = open(path + self.downloadFrame.dl_file[0], 'w')
+				f.write(self.downloadFrame.dl_file[1]) # Yea....
 				self.downloadFrame.destroy()
 				self.parent.geometry("")
 				self.initViewReports()
@@ -229,10 +253,11 @@ class SecureContactClient(Frame):
 				threading.Timer(3, self.centerWindow, (self.downloadFrame.winfo_width(), self.downloadFrame.winfo_height() - badPathText.winfo_height())).start()
 
 	def browseFileSystem(self):
+		Tk.withdraw
+		dn = filedialog.askdirectory()
 		self.downloadFrame.destroy()
 		self.parent.geometry("")
-		self.initViewReports()
-		pass
+		self.downloadReport(browsedDir=dn)
 
 	##############################################################################
 
@@ -295,104 +320,87 @@ class SecureContactClient(Frame):
 			self.uploadFrame.filePathEntry = Entry(fileNotFoundFrame)
 			self.uploadFrame.filePathEntry.grid(row=0, column=1)
 
-			filePathButton = Button(fileNotFoundFrame, text="Upload", command=self.initEncryptUpload)
-			filePathButton.grid(row=0, column=2)
+			buttonFrame = Frame(self.uploadFrame, background='#c0c0c0')
+			buttonFrame.grid(row=4, column=0)			
 
-			unknownButton = Button(fileNotFoundFrame, text="Path Unknown", command=self.findFile)
-			unknownButton.grid(row=1, column=2)
+			filePathButton = Button(buttonFrame, text="Upload", command= lambda: self.initEncryptUpload(-2))
+			filePathButton.grid(row=0, column=0)
+
+			browseForFileButton = Button(buttonFrame, text="Browse", command=self.browseForFile)
+			browseForFileButton.grid(row=0, column=1)
+
+			unknownButton = Button(buttonFrame, text="Path Unknown", command= lambda: self.findFile(0))
+			unknownButton.grid(row=0, column=2)
 
 			self.uploadFrame.update()
 			self.centerWindow(w=self.uploadFrame.winfo_width(), h=self.uploadFrame.winfo_height())
 		else:
-
 			if len(self.uploadFrame.local_file_paths) == 1:
-				self.initEncryptUpload()
+				self.initEncryptUpload(-1)
 			else:
-				self.findFile(mode=1)
+				self.findFile(1)
 
-	def findFile(self, mode=None):
-		if mode == None:
+	def findFile(self, mode):
+		file_paths = []
+		if mode == 0:
 			file_path = ""
-			check = False
-			multiple = False
-			file_paths = []
 			for root, dirs, files in os.walk('/home'):
 				for f in files:
 					if f == self.uploadFrame.file_name:
 						file_path = root + '/'
 						file_paths.append(file_path)
-						if not check:
-							check = True
-						else:
-							multiple = True
-			if multiple:
-				self.parent.geometry("")
-
-				multipleFilesText = Message(self.uploadFrame, text="Multiple files were found with the given filename.")
-				multipleFilesText.config(bg='white', bd=5, width=320, relief=RIDGE)
-				multipleFilesText.grid(row=4, column=0)
-
-				multipleFilesFrame = Frame(self.uploadFrame, background='#c0c0c0')
-				multipleFilesFrame.grid(row=5, column=0)
-				cntr = 1
-				self.uploadFrame.file_paths_list = []
-				for f in file_paths:
-					cntrText = Message(multipleFilesFrame, text=str(cntr))
-					cntrText.config(bg='#7ec0ee', bd=5, width=50, relief=RAISED)
-					fileText = Message(multipleFilesFrame, text=f + self.uploadFrame.file_name)
-					fileText.config(bg='#7ec0ee', bd=5, width=560, relief=RAISED)
-					fileButton = Button(multipleFilesFrame, text="Upload", command= lambda cntr=cntr: self.initEncryptUpload(buttonId=cntr - 1))
-					cntrText.grid(row=cntr - 1, column=0)
-					fileText.grid(row=cntr - 1, column=1)
-					fileButton.grid(row=cntr - 1, column=2)
-					self.uploadFrame.file_paths_list.append(f)
-					cntr += 1
-
-				self.uploadFrame.update()
-				self.centerWindow(w=self.uploadFrame.winfo_width(), h=self.uploadFrame.winfo_height())
-			else:
-				self.uploadFrame.file_paths_list = []
-				self.uploadFrame.file_paths_list.append(file_path)
-				self.initEncryptUpload()
-		else:
+		if len(file_paths) > 1 or mode == 1:
 			self.parent.geometry("")
 
 			multipleFilesText = Message(self.uploadFrame, text="Multiple files were found with the given filename.")
 			multipleFilesText.config(bg='white', bd=5, width=320, relief=RIDGE)
-			multipleFilesText.grid(row=4, column=0)
+			multipleFilesText.grid(row=5, column=0)
 
 			multipleFilesFrame = Frame(self.uploadFrame, background='#c0c0c0')
-			multipleFilesFrame.grid(row=5, column=0)
+			multipleFilesFrame.grid(row=6, column=0)
 			cntr = 1
-			self.uploadFrame.file_paths_list = []
-			for f in self.uploadFrame.local_file_paths:
+			if mode == 1:
+				file_paths = self.uploadFrame.local_file_paths
+			for f in file_paths:
 				cntrText = Message(multipleFilesFrame, text=str(cntr))
 				cntrText.config(bg='#7ec0ee', bd=5, width=50, relief=RAISED)
 				fileText = Message(multipleFilesFrame, text=f + self.uploadFrame.file_name)
 				fileText.config(bg='#7ec0ee', bd=5, width=560, relief=RAISED)
-				fileButton = Button(multipleFilesFrame, text="Upload", command= lambda cntr=cntr: self.initEncryptUpload(buttonId=cntr - 1))
+				fileButton = Button(multipleFilesFrame, text="Upload", command= lambda cntr=cntr: self.initEncryptUpload(cntr - 1))
 				cntrText.grid(row=cntr - 1, column=0)
 				fileText.grid(row=cntr - 1, column=1)
 				fileButton.grid(row=cntr - 1, column=2)
-				self.uploadFrame.file_paths_list.append(f)
+				if mode == 0:
+					self.uploadFrame.local_file_paths.append(f)
 				cntr += 1
-
 			self.uploadFrame.update()
 			self.centerWindow(w=self.uploadFrame.winfo_width(), h=self.uploadFrame.winfo_height())
-
-	def initEncryptUpload(self, buttonId=None):
-		if not buttonId == None:
-			fp = self.uploadFrame.file_paths_list[buttonId] + self.uploadFrame.file_name
+		elif len(file_paths) == 1:
+			self.uploadFrame.local_file_paths.append(file_path + self.uploadFrame.file_name)
+			self.initEncryptUpload(-1)
 		else:
-			if self.uploadFrame.boolcheck and not self.uploadFrame.filePathEntry.get() == "":
-				if not self.uploadFrame.filePathEntry.get()[len(self.uploadFrame.filePathEntry.get()) - 1] == '/':
-					fp = self.uploadFrame.filePathEntry.get() + "/" + self.uploadFrame.file_name
-				else:
-					fp = self.uploadFrame.filePathEntry.get() + self.uploadFrame.file_name
-			elif self.uploadFrame.boolcheck:
-				fp = self.uploadFrame.file_paths_list[0] + self.uploadFrame.file_name
+			self.parent.geometry("")
+
+			noFileText = Message(self.uploadFrame, text="No such files were found on the local system.")
+			noFileText.config(bg='white', bd=5, width=320, relief=RIDGE)
+			noFileText.grid(row=5, column=0)
+			
+			self.uploadFrame.update()
+			self.centerWindow(w=self.uploadFrame.winfo_width(), h=self.uploadFrame.winfo_height())
+		
+	def initEncryptUpload(self, mode):
+		fp = ""
+		if mode == -1:
+			fp = self.uploadFrame.local_file_paths[0]
+		elif mode == -2:
+			fp = self.uploadFrame.filePathEntry.get()
+			if not fp[len(fp) - 1] == '/':
+				fp += '/'
+				fp += self.uploadFrame.file_name
 			else:
-				fp = self.uploadFrame.local_file_paths[0]
+				fp += self.uploadFrame.file_name
+		else:
+			fp = self.uploadFrame.local_file_paths[mode] + self.uploadFrame.file_name
 
 		if self.uploadFrame.winfo_exists() == 1:
 			self.uploadFrame.destroy()
@@ -401,7 +409,7 @@ class SecureContactClient(Frame):
 		self.encryptUploadFrame = Frame(self, background='#c0c0c0')
 		self.encryptUploadFrame.pack(fill=BOTH, expand=1)
 
-		fileText = Message(self.encryptUploadFrame, text="File at: " + fp + " selected to upload.")
+		fileText = Message(self.encryptUploadFrame, text="File at: " + str(fp) + " selected to upload.")
 		fileText.config(bg='#f95252', bd=5, width=800, relief=RIDGE)
 		fileText.grid(row=0, column=0)
 
@@ -416,17 +424,21 @@ class SecureContactClient(Frame):
 		self.encryptUploadFrame.update()
 		self.centerWindow(w=self.encryptUploadFrame.winfo_width(), h=self.encryptUploadFrame.winfo_height())
 
+	def browseForFile(self):
+		Tk.withdraw
+		fn = filedialog.askopenfilename()
+		self.uploadFrame.local_file_paths.append(fn)
+		self.initEncryptUpload(-1)
+
 	def encryptUpload(self):
 		self.encryptUploadFrame.destroy()
 		self.parent.geometry("")
 		self.initUpload()
-		pass
 
 	def noEncryptUpload(self):
 		self.encryptUploadFrame.destroy()
 		self.parent.geometry("")
 		self.initUpload()
-		pass
 
 	##############################################################################
 
