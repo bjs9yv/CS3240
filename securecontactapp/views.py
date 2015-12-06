@@ -49,6 +49,8 @@ def reports(request):
             elif form.is_valid():
                 report = form.save(commit=False)
                 report.owner = request.user
+                theGroup = form.cleaned_data['group']
+                report.group.add(theGroup)
                 if report.folder != None and report.folder.owner != request.user:
                     report.folder = None
                 # TODO: if encrypted == True... encrypt the file(s) in a similar manner to how message encryption was done below

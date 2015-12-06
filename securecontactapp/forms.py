@@ -69,7 +69,7 @@ class MessageForm(forms.Form):
 
 class ReportForm(forms.ModelForm):
     files = MultiFileField()
-    group = forms.ModelChoiceField(queryset=Group.objects.all(), label='Group', required=False)
+    group = forms.ModelMultipleChoiceField(queryset=Group.objects.all())
 
     class Meta:
         model = Report
