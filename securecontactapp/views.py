@@ -201,6 +201,7 @@ def messages(request):
 @login_required()
 @user_passes_test(lambda u: u.is_active)
 def groups(request):
+    error = None
     if request.method == 'POST':
         if 'create' in request.POST:
             form = GroupForm(data=request.POST)
@@ -208,7 +209,7 @@ def groups(request):
                 new_group = form.save()
                 request.user.groups.add(new_group)
             else:
-                return HttpResponse('Group already exists')
+                error = 'group already exists'
         else:
             for key in request.POST.keys():
                 if key.startswith('add '):
@@ -220,7 +221,7 @@ def groups(request):
     form = GroupForm()
     groups = request.user.groups.all()
     groups_with_add_form = map(lambda g: (g, AddUserToGroupForm(), g.user_set.all()), groups)
-    context = {'form': form, 'groups': groups_with_add_form}
+    context = {'form': form, 'groups': groups_with_add_form, 'error': error}
     return render(request, 'groups.html', context)
 
 @login_required()
