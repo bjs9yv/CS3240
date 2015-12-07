@@ -416,6 +416,7 @@ def search(request):
                     keyword_matches = reports.filter(keyword__iregex=regex)
                     reports = desc_matches | text_matches | keyword_matches
 
+    # Prepare all reports for rendering
     reports_and_files = []
     for report in reports:
         files = File.objects.filter(attached_to=report)
@@ -423,6 +424,9 @@ def search(request):
         reports_and_files.append(report)
     context = {'reports': reports_and_files}
     return render(request, 'search.html', context)
+
+
+# # # # MARK: FOLDER EDITING # # # #
 
 @login_required()
 @user_passes_test(lambda u: u.is_active)
