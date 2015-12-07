@@ -26,12 +26,17 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.Hash import SHA256
 
+# # # # MARK: HOME # # # #
+
 @login_required()
 @user_passes_test(lambda u: u.is_active)
 def home(request):
     # Display how many messages a user has
     num_messages = len(Message.objects.filter(recipient=request.user))
     return render(request, 'home.html', {'num_messages': num_messages, 'reports': reports})
+
+
+# # # # MARK: REPORTS # # # #
 
 @login_required()
 @user_passes_test(lambda u: u.is_active)
@@ -64,7 +69,7 @@ def reports(request):
                 if r.exists():
                     # Delete from database
                     r.get().delete()
-        # MOVE TO FOLDER: If the "move to folder" was pressed...
+        # MOVE TO FOLDER: If "move to folder" was pressed...
         elif 'move' in request.POST:
             # Get the target folder that the report(s) will be moved to
             folder = Folder.objects.filter(owner=request.user, id=request.POST['folder'])
@@ -80,6 +85,8 @@ def reports(request):
                     r = r.get()
                     r.folder = folder
                     r.save(update_fields=['folder'])
+                    
+        # DELETE FOLDER: If "move to folder" was pressed...
         elif 'delete_folder' in request.POST:
             folder = Folder.objects.filter(owner=request.user, id=request.POST['folder'])
             if folder.exists():
@@ -109,21 +116,26 @@ def reports(request):
         else:
             reports = reports.filter(folder=None)
 
+    # Prepare reports for rendering
     reports_and_files = []
     for report in reports:
         files = File.objects.filter(attached_to=report)
         report_hash = SHA256.new(report.description.encode()).hexdigest()
         report = (report,files,report_hash)
         reports_and_files.append(report)
-    
+
     folders = Folder.objects.filter(owner=request.user)
     context = {'form': form, 'reports': reports_and_files, 'folders': folders,
                'error': error, 'can_submit_report': can_submit_report}
     return render(request, 'reports.html', context)
 
+
+# # # # MARK: EDIT REPORT # # # #
+
 @login_required
 @user_passes_test(lambda u: u.is_active)
 def edit_report(request, ID):
+    # Get the specified report from DB
     report = Report.objects.filter(id=ID)
     if not user_is_site_manager(request.user):
         report = report.filter(owner=request.user)
@@ -131,15 +143,20 @@ def edit_report(request, ID):
         return HttpResponseRedirect(reverse('reports'))
     error = None
 
+    # If an edited report was submitted...
     if request.method == 'POST':
         form = ReportForm(request.user, request.POST, request.FILES, instance=report.get())
         form.save()
         return HttpResponseRedirect(reverse('reports'))
 
+    # Prepare report for rendering
     form = ReportForm(request.user, instance=report.get())
     context = {'form': form, 'error': error}
     return render(request, 'edit_report.html', context)
     
+    
+# # # # MARK: MESSAGES # # # #
+
 @login_required
 @user_passes_test(lambda u: u.is_active)
 def messages(request):
@@ -169,14 +186,17 @@ def messages(request):
             # redirect to same page
             return HttpResponseRedirect('')
 
+        # DELETE MESSAGE: If "delete message" was selected...
         elif 'delete' in request.POST: 
             for d in request.POST.getlist('del'): 
                 m = Message.objects.get(id=d) 
                 m.delete()
 
+        # DECRYPT MESSAGE: If "decrypt" was selected...
         elif 'decrypt' in request.POST:
             u = User.objects.get(username=request.user)
             private_key = RSA.importKey(u.reporter.privatekey)
+            # For each checked message...
             for d in request.POST.getlist('del'): 
                 cipher = PKCS1_OAEP.new(private_key)
                 m = Message.objects.get(id=d)
@@ -189,9 +209,13 @@ def messages(request):
     else:
         form = MessageForm()
 
+    # Prepare messages for rendering...
     messages = Message.objects.filter(recipient=request.user)
     return render(request, 'messages.html', {'form': form, 'messages': messages})
     
+    
+# # # # MARK: GROUPS # # # #
+
 @login_required()
 @user_passes_test(lambda u: u.is_active)
 def groups(request):
@@ -217,11 +241,17 @@ def groups(request):
     context = {'form': form, 'groups': groups_with_add_form}
     return render(request, 'groups.html', context)
 
+
+# # # # MARK: ACCOUNT # # # #
+
 @login_required()
 @user_passes_test(lambda u: u.is_active)
 def account(request):
     context = {'site_manager': user_is_site_manager(request.user)}
     return render(request, 'account.html', context)
+
+
+# # # # MARK: REGISTER # # # #
 
 @sensitive_post_parameters('username', 'password1', 'password2')
 @csrf_protect
@@ -248,6 +278,9 @@ def registration(request):
     context = {'form': form}
     return TemplateResponse(request, 'registration/registration.html', context)
 
+
+# # # # MARK: CHECK LOGIN # # # #
+
 @sensitive_post_parameters('username', 'password')
 def check_login(request):
     valid = False
@@ -261,6 +294,9 @@ def check_login(request):
             valid = user.get().check_password(request.POST['password'])
 
     return JsonResponse({'valid': valid})
+
+
+# # # # MARK: GET REPORTS # # # #
 
 @sensitive_post_parameters('username', 'password')
 def get_reports(request):
@@ -283,6 +319,9 @@ def humans(request):
 
 def user_is_site_manager(user):
     return user.groups.filter(name='Site Manager').exists()
+
+
+# # # # MARK: SITE MANAGER # # # #
 
 @user_passes_test(user_is_site_manager)
 @user_passes_test(lambda u: u.is_active)
@@ -333,6 +372,9 @@ def site_manager(request):
         reports.append(report)
     context = {'form': form, 'reports': reports}
     return render(request, 'sitemanager.html', context)
+
+
+# # # # MARK: SITE MANAGER # # # #
 
 @login_required()
 @user_passes_test(lambda u: u.is_active)
