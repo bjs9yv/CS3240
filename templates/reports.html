@@ -54,7 +54,7 @@
     <a href="{% url 'folder' %}">Create New Folder</a>
     <input type="submit" name="delete_folder" value="Delete folder"/>
     <br><br><hr>
-    {% for report, files in reports %}
+    {% for report, files, hash in reports %}
       <table><tr><td><input type="checkbox" name="del" value="{{ report.id }}"/></td>
             <td><a href="edit/{{ report.id }}/">edit</a></td></tr></table>
       <b>Owner: </b> {{ report.owner }}<br>
@@ -78,6 +78,9 @@
 	  {% endif %}
       {% endif %}
       {% endfor%}
+
+      <br>
+      <b>Report hash: </b>{{ hash }} <br>
       </a>
       <hr>
     {% endfor %}

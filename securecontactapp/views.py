@@ -24,46 +24,59 @@ from base64 import b64encode, b64decode
 from Crypto import Random
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Hash import SHA256
 
 @login_required()
 @user_passes_test(lambda u: u.is_active)
 def home(request):
-    # display how many messages a user has
+    # Display how many messages a user has
     num_messages = len(Message.objects.filter(recipient=request.user))
     return render(request, 'home.html', {'num_messages': num_messages, 'reports': reports})
 
 @login_required()
 @user_passes_test(lambda u: u.is_active)
 def reports(request):
-    reports = Report.objects.filter(owner=request.user)
+    # Check user permissions
     can_submit_report = request.user.has_perm('securecontactapp.add_report')
     error = None
-    # if this is a POST request we need to process the form data
+    # If this is a POST request, process the form data
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
+        # create a form instance and populate it with data from the request
         form = ReportForm(request.user, request.POST, request.FILES)
+        
+        # NEW REPORT: If a new report was submitted...
         if 'report' in request.POST:
-            # check whether it's valid:
+            # If no permissions...
             if not request.user.has_perm('securecontactapp.add_report'):
                 error = 'you do not have permission to submit reports'
+            # If valid...
             elif form.is_valid():
                 report = form.save()
+            # If otherwise invalid...
             else:
                 error = 'form not valid'
+        
+        # DELETE: If the delete button was pressed...
         elif 'delete' in request.POST: 
+            # For each checked item...
             for d in request.POST.getlist('del'): 
                 r = Report.objects.filter(owner=request.user, id=d) 
                 if r.exists():
+                    # Delete from database
                     r.get().delete()
+        # MOVE TO FOLDER: If the "move to folder" was pressed...
         elif 'move' in request.POST:
+            # Get the target folder that the report(s) will be moved to
             folder = Folder.objects.filter(owner=request.user, id=request.POST['folder'])
             if folder.exists():
                 folder = folder.get()
             else:
                 folder = None
+            # For each checked item...
             for d in request.POST.getlist('del'): 
                 r = Report.objects.filter(owner=request.user, id=d) 
                 if r.exists():
+                    # Access report and update its folder, then save it
                     r = r.get()
                     r.folder = folder
                     r.save(update_fields=['folder'])
@@ -78,6 +91,8 @@ def reports(request):
                     report.folder = folder.parent
                     report.save(update_fields=['folder'])
                 folder.delete()
+    
+    # END POST BLOCK, BEGIN GET BLOCK
     form = ReportForm(request.user)
 
     reports = Report.objects.filter(owner=request.user)
@@ -94,11 +109,13 @@ def reports(request):
     reports_and_files = []
     for report in reports:
         files = File.objects.filter(attached_to=report)
-        report = (report,files)
+        report_hash = SHA256.new(report.description.encode()).hexdigest()
+        report = (report,files,report_hash)
         reports_and_files.append(report)
+    
     folders = Folder.objects.filter(owner=request.user)
     context = {'form': form, 'reports': reports_and_files, 'folders': folders,
-            'error': error, 'can_submit_report': can_submit_report}
+               'error': error, 'can_submit_report': can_submit_report}
     return render(request, 'reports.html', context)
 
 @login_required
