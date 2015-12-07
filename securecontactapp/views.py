@@ -24,6 +24,7 @@ from base64 import b64encode, b64decode
 from Crypto import Random
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Hash import SHA256
 
 @login_required()
 @user_passes_test(lambda u: u.is_active)
@@ -63,11 +64,10 @@ def reports(request):
                 if r.exists():
                     # Delete from database
                     r.get().delete()
-                    
         # MOVE TO FOLDER: If the "move to folder" was pressed...
-        elif 'move_to_folder' in request.POST:
+        elif 'move' in request.POST:
             # Get the target folder that the report(s) will be moved to
-            folder = Folder.objects.filter(owner=request.user, id=request.POST['move_to_folder'])
+            folder = Folder.objects.filter(owner=request.user, id=request.POST['folder'])
             if folder.exists():
                 folder = folder.get()
             else:
@@ -80,6 +80,17 @@ def reports(request):
                     r = r.get()
                     r.folder = folder
                     r.save(update_fields=['folder'])
+        elif 'delete_folder' in request.POST:
+            folder = Folder.objects.filter(owner=request.user, id=request.POST['folder'])
+            if folder.exists():
+                folder = folder.get()
+                for child in Folder.objects.filter(parent=folder):
+                    child.parent = folder.parent
+                    child.save(update_fields=['parent'])
+                for report in Report.objects.filter(folder=folder):
+                    report.folder = folder.parent
+                    report.save(update_fields=['folder'])
+                folder.delete()
     
     # GET 
     
@@ -101,11 +112,13 @@ def reports(request):
     reports_and_files = []
     for report in reports:
         files = File.objects.filter(attached_to=report)
-        report = (report,files)
+        report_hash = SHA256.new(report.description.encode()).hexdigest()
+        report = (report,files,report_hash)
         reports_and_files.append(report)
+    
     folders = Folder.objects.filter(owner=request.user)
     context = {'form': form, 'reports': reports_and_files, 'folders': folders,
-            'error': error, 'can_submit_report': can_submit_report}
+               'error': error, 'can_submit_report': can_submit_report}
     return render(request, 'reports.html', context)
 
 @login_required
