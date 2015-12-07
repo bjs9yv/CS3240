@@ -19,7 +19,7 @@ from .forms import MessageForm, ReportForm, SiteManagerForm, GroupForm, AddUserT
 from .models import Message, Report, File, Reporter, Folder
 
 import os
-#import re0 # was this something?
+import re
 
 from base64 import b64encode, b64decode
 from Crypto import Random
