@@ -2,12 +2,14 @@ from tkinter import *
 import threading
 from Crypto.PublicKey import RSA
 import KeyCheck
+import CheckAES
 import os
 import getpass
 import requests
 import re
 from Crypto import Random
 from tkinter import filedialog
+from Crypto.Cipher import AES
 
 class SecureContactClient(Frame):
 	def __init__(self, parent):
@@ -61,7 +63,9 @@ class SecureContactClient(Frame):
 			if not "PrivateKey.txt" in os.listdir(os.getcwd()): # TODO change this to search sub directory where keys are stored
 				temp = True
 				KeyCheck.gen_keys()
+				CheckAES.gen_cipher()
 				# TODO: upload PublicKey.txt to db
+
 			self.loginFrame.first_time = temp 
 			self.initMenu()
 		else:
@@ -106,8 +110,8 @@ class SecureContactClient(Frame):
 			firstTimeText = Message(firstTimeFrame, text="Welcome to the SecureContactClient application!")
 			firstTimeText.config(bg='#ffa500', bd=5, width=300, relief=RIDGE)
 			firstTimeText.grid(row=0, column=0)
-			keyGeneratedText = Message(firstTimeFrame, text="We've successfully generated a public/private RSA key pair for your account.")
-			keyGeneratedText.config(bg='#ffa500', bd=5, width=600, relief=RIDGE)
+			keyGeneratedText = Message(firstTimeFrame, text="We've successfully generated a public/private RSA key pair for your account, along with an AES cipher.")
+			keyGeneratedText.config(bg='#ffa500', bd=5, width=300, relief=RIDGE)
 			keyGeneratedText.grid(row=1, column=0)
 
 		menuButtonsFrame = Frame(self.menuFrame, background='#c0c0c0')
@@ -118,17 +122,23 @@ class SecureContactClient(Frame):
 		viewReportsButton = Button(menuButtonsFrame, text="View Available Reports", bg='#33cc77', command=self.initViewReports)
 		viewReportsButton.grid(row=0, column=1)
 
-		uploadText = Message(menuButtonsFrame, text="2")
-		uploadText.config(bg='#33cc77', bd=5, width=50, relief=RAISED)
-		uploadText.grid(row=1, column=0)
-		uploadButton = Button(menuButtonsFrame, text="Upload File", bg='#33cc77', command=self.initUpload)
-		uploadButton.grid(row=1, column=1)
+		encryptFileText = Message(menuButtonsFrame, text="2")
+		encryptFileText.config(bg='#33cc77', bd=5, width=50, relief=RAISED)
+		encryptFileText.grid(row=1, column=0)
+		encryptFileButton = Button(menuButtonsFrame, text="Encrypt Files", bg='#33cc77', command=self.initEncryptFiles)
+		encryptFileButton.grid(row=1, column=1)
 
-		quitText = Message(menuButtonsFrame, text="3")
+		uploadText = Message(menuButtonsFrame, text="3")
+		uploadText.config(bg='#33cc77', bd=5, width=50, relief=RAISED)
+		uploadText.grid(row=2, column=0)
+		uploadButton = Button(menuButtonsFrame, text="Upload File", bg='#33cc77', command=self.initUpload)
+		uploadButton.grid(row=2, column=1)
+
+		quitText = Message(menuButtonsFrame, text="4")
 		quitText.config(bg='#33cc77', bd=5, width=50, relief=RAISED)
-		quitText.grid(row=2, column=0)
+		quitText.grid(row=3, column=0)
 		quitButton = Button(menuButtonsFrame, text="Quit", bg='#33cc77', command=self.quit)
-		quitButton.grid(row=2, column=1)
+		quitButton.grid(row=3, column=1)
 
 		self.menuFrame.update()
 		self.centerWindow(w=self.menuFrame.winfo_width(), h=self.menuFrame.winfo_height())
@@ -163,7 +173,7 @@ class SecureContactClient(Frame):
 		else:
 			self.viewReportsFrame.reports = []
 			for item in response.json()['reports']:
-				self.viewReportsFrame.reports.append([item['description'], item['text'], item['files']])
+				self.viewReportsFrame.reports.append([item['description'], item['text'], item['files'], items['encrypted']])
 
 			reportListFrame = Frame(self.viewReportsFrame, background='#c0c0c0')
 			reportListFrame.grid(row=2, column=0)
@@ -242,6 +252,8 @@ class SecureContactClient(Frame):
 				f.write(self.downloadFrame.dl_file[1])
 				for rf in self.downloadFrame.dl_file[2]:
 					response = requests.get('http://t16-heroku-app.herokuapp.com' + rf, stream=True)
+					if self.downloadFrame.dl_file[4]:
+						response = self.decryptFile(response)
 					split_url = rf.split('/')
 					fln = split_url[len(split_url) - 1]
 					try:
@@ -264,12 +276,83 @@ class SecureContactClient(Frame):
 				threading.Timer(3, badPathText.destroy, args=None).start()
 				threading.Timer(3, self.centerWindow, (self.downloadFrame.winfo_width(), self.downloadFrame.winfo_height() - badPathText.winfo_height())).start()
 
+	def decryptFile(self, ciphertext):
+		bit_key = ""
+		with open('./AES_Cipher.txt', 'r') as f:
+			bit_key = f.read()
+		aes_guard = AES.new(bit_key, AES.MODE_ECB, 'Ignore me')
+		temp = aes_guard.decrypt(ciphertext)
+		return temp
+
 	def browseFileSystem(self):
 		Tk.withdraw
 		dn = filedialog.askdirectory()
 		self.downloadFrame.destroy()
 		self.parent.geometry("")
 		self.downloadReport(browsedDir=dn)
+
+	##############################################################################
+
+	# -------------------------------------------------------------------------- #	
+	# ------------------------------Encrypt Files------------------------------- #
+	# -------------------------------------------------------------------------- #	
+
+	def initEncryptFiles(self):
+		if self.menuFrame.winfo_exists() == 1:
+			self.menuFrame.destroy()
+			self.parent.geometry("")
+		self.encryptFileFrame = Frame(self, background='#c0c0c0')
+		self.encryptFileFrame.pack(fill=BOTH, expand=1)
+
+		self.encryptFileFrame.fileUIFrame = Frame(self.encryptFileFrame, background='#c0c0c0')
+		self.encryptFileFrame.fileUIFrame.grid(row=0, column = 0)
+
+		browseButton = Button(self.encryptFileFrame.fileUIFrame, text="Upload", command=self.browseFile)
+		browseButton.grid(row=0, column=0)
+
+		self.encryptFileFrame.update()
+		self.centerWindow(w=self.encryptFileFrame.winfo_width(), h=self.encryptFileFrame.winfo_height())
+
+
+	def browseFile(self):
+		Tk.withdraw
+		fn = filedialog.askopenfilename()
+		self.encryptFileFrame.fn = fn
+		self.parent.geometry("")
+
+		fileNameText = Message(self.encryptFileFrame.fileUIFrame, text=fn)
+		fileNameText.config(bg='#f95252', bd=5, width=280, relief=RIDGE)
+		fileNameText.grid(row=0, column=1)
+
+		encryptNoDelButton = Button(self.encryptFileFrame.fileUIFrame, text="Encrypt File", command=self.encFile)
+		encryptNoDelButton.grid(row=1, column=0)
+
+		encryptDelButton = Button(self.encryptFileFrame.fileUIFrame, text="Encrypt & Delete Original", command=self.encDelFile)
+		encryptDelButton.grid(row=1, column=1)
+
+		self.encryptFileFrame.update()
+		self.centerWindow(w=self.encryptFileFrame.winfo_width(), h=self.encryptFileFrame.winfo_height())
+
+	def encFile(self):
+		file_contents = ""
+		#os.path.dirname(os.path.abspath(fn)) + 
+		with open(self.encryptFileFrame.fn, 'r') as f:
+			file_contents = f.read()
+		bit_key = ""
+		with open('./AES_Cipher.txt', 'r') as f:
+			bit_key = f.read()
+		aes_guard = AES.new(bit_key, AES.MODE_ECB, 'Ignore me')
+		ciphertext = aes_guard.encrypt(file_contents)
+		with open(self.encryptFileFrame.fn + ".enc", 'wb') as f:
+			f.write(ciphertext)
+		self.encryptFileFrame.destroy()
+		self.parent.geometry("")
+		self.initMenu()
+
+	def encDelFile(self):
+		self.encryptFileFrame.destroy()
+		self.parent.geometry("")
+		self.initMenu()
 
 	##############################################################################
 
