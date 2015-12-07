@@ -38,7 +38,7 @@ def reports(request):
     # Check user permissions
     can_submit_report = request.user.has_perm('securecontactapp.add_report')
     error = None
-    # If this is a POST request, process the form data
+    # POST: Process form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request
         form = ReportForm(request.user, request.POST, request.FILES)
@@ -81,14 +81,16 @@ def reports(request):
                     r.folder = folder
                     r.save(update_fields=['folder'])
     
-    # END POST BLOCK, BEGIN GET BLOCK
+    # GET 
     
     form = ReportForm(request.user)
-
     reports = Report.objects.filter(owner=request.user)
     
+    # GET: Filter reports by visibility selector
     if 'visibility' in request.GET:
         reports = reports.filter(private=(request.GET['visibility'] == 'private'))
+    
+    # GET: Filter reports by folder
     if 'folder' in request.GET:
         folder = Folder.objects.filter(owner=request.user, id=request.GET['folder'])
         if folder.exists():
