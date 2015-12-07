@@ -155,6 +155,7 @@ class SecureContactClient(Frame):
 
 		passdic = {'username':self.usn,'password':self.pwd}
 		response = requests.get('http://t16-heroku-app.herokuapp.com/get_reports/', params=passdic)
+		print(response.json())
 		if len(response.json()['reports']) == 0:
 			noReportsTest = Message(self.viewReportsFrame, text="No reports found on the server.")
 			noReportsTest.config(bg='#f95252', bd=5, width=200, relief=RIDGE)
@@ -238,7 +239,18 @@ class SecureContactClient(Frame):
 				path += '/'
 			try:
 				f = open(path + self.downloadFrame.dl_file[0], 'w')
-				f.write(self.downloadFrame.dl_file[1]) # Yea....
+				f.write(self.downloadFrame.dl_file[1])
+				for rf in self.downloadFrame.dl_file[2]:
+					response = requests.get('http://t16-heroku-app.herokuapp.com' + rf, stream=True)
+					split_url = rf.split('/')
+					fln = split_url[len(split_url) - 1]
+					try:
+						new_file = open(path + fln, 'wb')
+						for block in response.iter_content(1024):
+							new_file.write(block)
+					#	new_file.write(response.text)
+					except:
+						continue
 				self.downloadFrame.destroy()
 				self.parent.geometry("")
 				self.initViewReports()
