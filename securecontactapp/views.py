@@ -98,6 +98,12 @@ def reports(request):
                     report.folder = folder.parent
                     report.save(update_fields=['folder'])
                 folder.delete()
+        elif 'rename_folder' in request.POST:
+            folder = Folder.objects.filter(owner=request.user, id=request.POST['folder'])
+            if folder.exists():
+                folder = folder.get()
+                folder.name = request.POST['new_name']
+                folder.save(update_fields=['name'])
     
     # GET 
     
