@@ -19,7 +19,8 @@ from .forms import MessageForm, ReportForm, SiteManagerForm, GroupForm, AddUserT
 from .models import Message, Report, File, Reporter, Folder
 
 import os
-import re
+#import re0 # was this something?
+
 from base64 import b64encode, b64decode
 from Crypto import Random
 from Crypto.PublicKey import RSA
@@ -335,7 +336,7 @@ def user_is_site_manager(user):
 @csrf_protect
 def site_manager(request):
     if request.method == 'POST':
-        if 'delete' in request.POST: 
+        if 'delete' in request.POST:
             for d in request.POST.getlist('del'):
                 r = Report.objects.filter(id=d)
                 r.delete()
