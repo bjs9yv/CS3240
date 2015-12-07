@@ -43,8 +43,8 @@
 <form action="" method="POST" autocomplete="off">
     {% csrf_token %}
     <input type="submit" name="delete" value="Delete selected"/>
-    Move to Existing Folder: 
-    <select name="move_to_folder" onchange="form.submit()">
+    <input type="submit" name="move" value="Move to Existing Folder"/>
+    <select name="folder">
       <option selected disabled>Folder</option>
       <option value="0">/</option>
       {% for folder in folders %}
@@ -52,6 +52,7 @@
       {% endfor %}
     </select>
     <a href="{% url 'folder' %}">Create New Folder</a>
+    <input type="submit" name="delete_folder" value="Delete folder"/>
     <br><br><hr>
     {% for report, files in reports %}
       <table><tr><td><input type="checkbox" name="del" value="{{ report.id }}"/></td>

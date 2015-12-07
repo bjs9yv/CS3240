@@ -55,8 +55,8 @@ def reports(request):
                 r = Report.objects.filter(owner=request.user, id=d) 
                 if r.exists():
                     r.get().delete()
-        elif 'move_to_folder' in request.POST:
-            folder = Folder.objects.filter(owner=request.user, id=request.POST['move_to_folder'])
+        elif 'move' in request.POST:
+            folder = Folder.objects.filter(owner=request.user, id=request.POST['folder'])
             if folder.exists():
                 folder = folder.get()
             else:
@@ -67,6 +67,17 @@ def reports(request):
                     r = r.get()
                     r.folder = folder
                     r.save(update_fields=['folder'])
+        elif 'delete_folder' in request.POST:
+            folder = Folder.objects.filter(owner=request.user, id=request.POST['folder'])
+            if folder.exists():
+                folder = folder.get()
+                for child in Folder.objects.filter(parent=folder):
+                    child.parent = folder.parent
+                    child.save(update_fields=['parent'])
+                for report in Report.objects.filter(folder=folder):
+                    report.folder = folder.parent
+                    report.save(update_fields=['folder'])
+                folder.delete()
     form = ReportForm(request.user)
 
     reports = Report.objects.filter(owner=request.user)
