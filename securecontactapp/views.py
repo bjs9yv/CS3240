@@ -28,45 +28,61 @@ from Crypto.Cipher import PKCS1_OAEP
 @login_required()
 @user_passes_test(lambda u: u.is_active)
 def home(request):
-    # display how many messages a user has
+    # Display how many messages a user has
     num_messages = len(Message.objects.filter(recipient=request.user))
     return render(request, 'home.html', {'num_messages': num_messages, 'reports': reports})
 
 @login_required()
 @user_passes_test(lambda u: u.is_active)
 def reports(request):
-    reports = Report.objects.filter(owner=request.user)
+    # Check user permissions
     can_submit_report = request.user.has_perm('securecontactapp.add_report')
     error = None
-    # if this is a POST request we need to process the form data
+    # If this is a POST request, process the form data
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
+        # create a form instance and populate it with data from the request
         form = ReportForm(request.user, request.POST, request.FILES)
+        
+        # NEW REPORT: If a new report was submitted...
         if 'report' in request.POST:
-            # check whether it's valid:
+            # If no permissions...
             if not request.user.has_perm('securecontactapp.add_report'):
                 error = 'you do not have permission to submit reports'
+            # If valid...
             elif form.is_valid():
                 report = form.save()
+            # If otherwise invalid...
             else:
                 error = 'form not valid'
+        
+        # DELETE: If the delete button was pressed...
         elif 'delete' in request.POST: 
+            # For each checked item...
             for d in request.POST.getlist('del'): 
                 r = Report.objects.filter(owner=request.user, id=d) 
                 if r.exists():
+                    # Delete from database
                     r.get().delete()
+                    
+        # MOVE TO FOLDER: If the "move to folder" was pressed...
         elif 'move_to_folder' in request.POST:
+            # Get the target folder that the report(s) will be moved to
             folder = Folder.objects.filter(owner=request.user, id=request.POST['move_to_folder'])
             if folder.exists():
                 folder = folder.get()
             else:
                 folder = None
+            # For each checked item...
             for d in request.POST.getlist('del'): 
                 r = Report.objects.filter(owner=request.user, id=d) 
                 if r.exists():
+                    # Access report and update its folder, then save it
                     r = r.get()
                     r.folder = folder
                     r.save(update_fields=['folder'])
+    
+    # END POST BLOCK, BEGIN GET BLOCK
+    
     form = ReportForm(request.user)
 
     reports = Report.objects.filter(owner=request.user)
