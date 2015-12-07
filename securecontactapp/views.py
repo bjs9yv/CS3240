@@ -24,6 +24,7 @@ from base64 import b64encode, b64decode
 from Crypto import Random
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Hash import SHA256
 
 @login_required()
 @user_passes_test(lambda u: u.is_active)
@@ -83,11 +84,13 @@ def reports(request):
     reports_and_files = []
     for report in reports:
         files = File.objects.filter(attached_to=report)
-        report = (report,files)
+        report_hash = SHA256.new(report.description.encode()).hexdigest()
+        report = (report,files,report_hash)
         reports_and_files.append(report)
+    
     folders = Folder.objects.filter(owner=request.user)
     context = {'form': form, 'reports': reports_and_files, 'folders': folders,
-            'error': error, 'can_submit_report': can_submit_report}
+               'error': error, 'can_submit_report': can_submit_report}
     return render(request, 'reports.html', context)
 
 @login_required
