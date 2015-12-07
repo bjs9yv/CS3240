@@ -165,7 +165,6 @@ class SecureContactClient(Frame):
 
 		passdic = {'username':self.usn,'password':self.pwd}
 		response = requests.get('http://t16-heroku-app.herokuapp.com/get_reports/', params=passdic)
-		print(response.json())
 		if len(response.json()['reports']) == 0:
 			noReportsTest = Message(self.viewReportsFrame, text="No reports found on the server.")
 			noReportsTest.config(bg='#f95252', bd=5, width=200, relief=RIDGE)
@@ -173,7 +172,7 @@ class SecureContactClient(Frame):
 		else:
 			self.viewReportsFrame.reports = []
 			for item in response.json()['reports']:
-				self.viewReportsFrame.reports.append([item['description'], item['text'], item['files'], items['encrypted']])
+				self.viewReportsFrame.reports.append([item['description'], item['text'], item['files'], item['encrypted']])
 
 			reportListFrame = Frame(self.viewReportsFrame, background='#c0c0c0')
 			reportListFrame.grid(row=2, column=0)
@@ -252,7 +251,7 @@ class SecureContactClient(Frame):
 				f.write(self.downloadFrame.dl_file[1])
 				for rf in self.downloadFrame.dl_file[2]:
 					response = requests.get('http://t16-heroku-app.herokuapp.com' + rf, stream=True)
-					if self.downloadFrame.dl_file[4]:
+					if self.downloadFrame.dl_file[3]:
 						response = self.decryptFile(response)
 					split_url = rf.split('/')
 					fln = split_url[len(split_url) - 1]
@@ -277,12 +276,16 @@ class SecureContactClient(Frame):
 				threading.Timer(3, self.centerWindow, (self.downloadFrame.winfo_width(), self.downloadFrame.winfo_height() - badPathText.winfo_height())).start()
 
 	def decryptFile(self, ciphertext):
+		priv_key = ""
+		with open('./PrivateKey.txt', 'r') as f:
+			priv_key = f.read()
+		priv_RSA = RSA.importKey(priv_key)
+		temp = priv_RSA.decrypt(ciphertext)
 		bit_key = ""
 		with open('./AES_Cipher.txt', 'r') as f:
 			bit_key = f.read()
 		aes_guard = AES.new(bit_key, AES.MODE_ECB, 'Ignore me')
-		temp = aes_guard.decrypt(ciphertext)
-		return temp
+		return aes_guard.decrypt(temp)
 
 	def browseFileSystem(self):
 		Tk.withdraw
@@ -335,7 +338,6 @@ class SecureContactClient(Frame):
 
 	def encFile(self):
 		file_contents = ""
-		#os.path.dirname(os.path.abspath(fn)) + 
 		with open(self.encryptFileFrame.fn, 'r') as f:
 			file_contents = f.read()
 		bit_key = ""
@@ -343,8 +345,13 @@ class SecureContactClient(Frame):
 			bit_key = f.read()
 		aes_guard = AES.new(bit_key, AES.MODE_ECB, 'Ignore me')
 		ciphertext = aes_guard.encrypt(file_contents)
+		pub_key = ""
+		with open ('./PublicKey.txt', 'r') as f:
+			pub_key = f.read()
+		pub_RSA = RSA.importKey(pub_key)
+		RSA_ciphertext = pub_RSA.encrypt(ciphertext, 32)
 		with open(self.encryptFileFrame.fn + ".enc", 'wb') as f:
-			f.write(ciphertext)
+			f.write(RSA_ciphertext)
 		self.encryptFileFrame.destroy()
 		self.parent.geometry("")
 		self.initMenu()
