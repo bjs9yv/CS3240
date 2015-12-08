@@ -60,7 +60,7 @@
             <td><a href="edit/{{ report.id }}/">edit</a></td></tr></table>
       <b>Owner: </b> {{ report.owner }}<br>
       <!-- Replace with DateTimeStamp -->
-      <b>Created: </b> {{ report.timestamp|time:"P"}} {{ report.timestamp|date:"c"}}<br>
+      <b>Created: </b> {{ report.timestamp|time:"P"}} {{ report.datestamp|date:"D d M Y"}}<br>
       <b>Keyword: </b> {{ report.keyword }}<br>
       <b>Group(s): </b>
       <ul style="margin:0px;"> {% for group in report.group.all %} <li>{{ group }}</li> {% endfor %}</ul>
