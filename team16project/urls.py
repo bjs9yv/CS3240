@@ -33,7 +33,7 @@ urlpatterns = patterns('',
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if not User.objects.filter(username='admin').exists():
-    usr = User(username='admin', password='pbkdf2_sha256$20000$F0pHmzPSjX85$zAjUBXWVnbCdqoI8HitKaJKaNLuiCntzjLuNPw9I0BQ=', si)
+    usr = User(username='admin', password='pbkdf2_sha256$20000$F0pHmzPSjX85$zAjUBXWVnbCdqoI8HitKaJKaNLuiCntzjLuNPw9I0BQ=')
     usr.save()
     # In addition to creating an account we will also generate keypair
     g = Random.new().read
