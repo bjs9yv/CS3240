@@ -318,7 +318,10 @@ def get_reports(request):
                 report_info_and_files['description'] = report.description
                 report_info_and_files['text'] = report.text
                 report_info_and_files['encrypted'] = report.encrypted
-                report_info_and_files['files'] = list(map(lambda f: f.file.url, File.objects.filter(attached_to=report).exclude(file=None)))
+                try:
+                    report_info_and_files['files'] = list(map(lambda f: f.file.url, File.objects.filter(attached_to=report).exclude(file=None)))
+                except:
+                    report_info_and_files['files'] = list()
                 all_reports.append(report_info_and_files)
             return JsonResponse({'reports': all_reports})
     return JsonResponse({})
