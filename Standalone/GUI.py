@@ -9,7 +9,8 @@ import requests
 import re
 from Crypto import Random
 from tkinter import filedialog
-from Crypto.Cipher import AES
+from Crypto.Cipher import AES, PKCS1_OAEP
+import base64
 
 class SecureContactClient(Frame):
 	def __init__(self, parent):
@@ -60,9 +61,9 @@ class SecureContactClient(Frame):
 		response = requests.get('http://t16-heroku-app.herokuapp.com/check_login/', params=passdic)
 		if response.json()['valid']:
 			temp = False
-			if not "PrivateKey.txt" in os.listdir(os.getcwd()): # TODO change this to search sub directory where keys are stored
+			if not "AES_Key.txt" in os.listdir(os.getcwd()): # TODO change this to search sub directory where keys are stored
 				temp = True
-				KeyCheck.gen_keys()
+				#KeyCheck.gen_keys()
 				CheckAES.gen_cipher()
 				# TODO: upload PublicKey.txt to db
 
@@ -246,25 +247,28 @@ class SecureContactClient(Frame):
 		else:
 			if not path[len(path) - 1] == '/':
 				path += '/'
-			try:
-				f = open(path + self.downloadFrame.dl_file[0], 'w')
-				f.write(self.downloadFrame.dl_file[1])
-				for rf in self.downloadFrame.dl_file[2]:
-					response = requests.get('http://t16-heroku-app.herokuapp.com' + rf, stream=True)
+			#try:
+			f = open(path + self.downloadFrame.dl_file[0], 'w')
+			f.write(self.downloadFrame.dl_file[1])
+			for rf in self.downloadFrame.dl_file[2]:
+				response = requests.get('http://t16-heroku-app.herokuapp.com' + rf, stream=True)
+				split_url = rf.split('/')
+				fln = split_url[len(split_url) - 1]
+				try:
+					new_file = open(path + fln, 'wb')
 					if self.downloadFrame.dl_file[3]:
-						response = self.decryptFile(response)
-					split_url = rf.split('/')
-					fln = split_url[len(split_url) - 1]
-					try:
-						new_file = open(path + fln, 'wb')
+						dec_file = self.decryptFile(response.text)
+						new_file.write(dec_file)
+					else:
 						for block in response.iter_content(1024):
 							new_file.write(block)
-					#	new_file.write(response.text)
-					except:
-						continue
-				self.downloadFrame.destroy()
-				self.parent.geometry("")
-				self.initViewReports()
+				except Exception as e:
+					print(e)
+					continue
+			self.downloadFrame.destroy()
+			self.parent.geometry("")
+			self.initViewReports()
+			"""
 			except:
 				self.parent.geometry("")
 				badPathText = Message(self.downloadFrame, text="Invalid path location, please try a different path.")
@@ -274,18 +278,16 @@ class SecureContactClient(Frame):
 				self.centerWindow(w=self.downloadFrame.winfo_width(), h=self.downloadFrame.winfo_height())
 				threading.Timer(3, badPathText.destroy, args=None).start()
 				threading.Timer(3, self.centerWindow, (self.downloadFrame.winfo_width(), self.downloadFrame.winfo_height() - badPathText.winfo_height())).start()
+			"""
 
-	def decryptFile(self, ciphertext):
-		priv_key = ""
-		with open('./PrivateKey.txt', 'r') as f:
-			priv_key = f.read()
-		priv_RSA = RSA.importKey(priv_key)
-		temp = priv_RSA.decrypt(ciphertext)
+	def decryptFile(self, b64d):
+		ciphertext = base64.b64decode(b64d.encode())
+		iv = ciphertext[:AES.block_size]
 		bit_key = ""
-		with open('./AES_Cipher.txt', 'r') as f:
+		with open('./AES_Key.txt', 'rb') as f:
 			bit_key = f.read()
-		aes_guard = AES.new(bit_key, AES.MODE_ECB, 'Ignore me')
-		return aes_guard.decrypt(temp)
+		aes_guard = AES.new(bit_key, AES.MODE_CBC, iv)
+		return self.unpad(aes_guard.decrypt(ciphertext[AES.block_size:]))
 
 	def browseFileSystem(self):
 		Tk.withdraw
@@ -338,20 +340,16 @@ class SecureContactClient(Frame):
 
 	def encFile(self):
 		file_contents = ""
-		with open(self.encryptFileFrame.fn, 'r') as f:
+		with open(self.encryptFileFrame.fn, 'rb') as f:
 			file_contents = f.read()
-		bit_key = ""
-		with open('./AES_Cipher.txt', 'r') as f:
-			bit_key = f.read()
-		aes_guard = AES.new(bit_key, AES.MODE_ECB, 'Ignore me')
-		ciphertext = aes_guard.encrypt(file_contents)
-		pub_key = ""
-		with open ('./PublicKey.txt', 'r') as f:
-			pub_key = f.read()
-		pub_RSA = RSA.importKey(pub_key)
-		RSA_ciphertext = pub_RSA.encrypt(ciphertext, 32)
+		with open('./AES_Key.txt', 'rb') as f:
+			enc_bit_key = f.read()
+		r = Random.new()
+		iv = r.read(AES.block_size)
+		aes_guard = AES.new(enc_bit_key, AES.MODE_CBC, iv)
+		ciphertext = aes_guard.encrypt(self.pad(file_contents))
 		with open(self.encryptFileFrame.fn + ".enc", 'wb') as f:
-			f.write(RSA_ciphertext)
+			f.write(base64.b64encode(iv + ciphertext))
 		self.encryptFileFrame.destroy()
 		self.parent.geometry("")
 		self.initMenu()
@@ -559,6 +557,14 @@ class SecureContactClient(Frame):
 		y = (screen_height - height)/2
 
 		self.parent.geometry("%dx%d+%d+%d" % (width, height, x, y))
+
+	def pad(self, message):
+		togo = AES.block_size - (len(message) % AES.block_size)
+		return message + (chr(togo)*togo).encode()
+
+	def unpad(self, padded):
+		num = padded[-1]
+		return padded[:-num]
 
 def main():
 	root = Tk()
