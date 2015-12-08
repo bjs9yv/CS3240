@@ -28,7 +28,7 @@ class SecureContactClient(Frame):
 		self.loginFrame = Frame(self, background="#c0c0c0")
 		self.loginFrame.pack(fill=BOTH, expand=1)
 		
-		secureIcon = PhotoImage(file="./GUI_Content/SecureContact.png")
+		secureIcon = PhotoImage(file="./SecureContact.png")
 		imageLabel = Label(self.loginFrame, image=secureIcon)
 		imageLabel.photo = secureIcon
 		imageLabel.grid(row=0, column=0)
@@ -100,6 +100,10 @@ class SecureContactClient(Frame):
 				if self.viewReportsFrame.winfo_exists() == 1:
 					self.viewReportsFrame.destroy()
 					self.parent.geometry("")
+			elif frameId == 2:
+				if self.encryptFileFrame.winfo_exists() == 1:
+					self.encryptFileFrame.destroy()
+					self.parent.geometry("")
 			else:
 				pass
 		self.menuFrame = Frame(self, background="#c0c0c0")
@@ -129,17 +133,19 @@ class SecureContactClient(Frame):
 		encryptFileButton = Button(menuButtonsFrame, text="Encrypt Files", bg='#33cc77', command=self.initEncryptFiles)
 		encryptFileButton.grid(row=1, column=1)
 
+		"""
 		uploadText = Message(menuButtonsFrame, text="3")
 		uploadText.config(bg='#33cc77', bd=5, width=50, relief=RAISED)
 		uploadText.grid(row=2, column=0)
 		uploadButton = Button(menuButtonsFrame, text="Upload File", bg='#33cc77', command=self.initUpload)
 		uploadButton.grid(row=2, column=1)
+		"""
 
-		quitText = Message(menuButtonsFrame, text="4")
+		quitText = Message(menuButtonsFrame, text="3")
 		quitText.config(bg='#33cc77', bd=5, width=50, relief=RAISED)
-		quitText.grid(row=3, column=0)
+		quitText.grid(row=2, column=0)
 		quitButton = Button(menuButtonsFrame, text="Quit", bg='#33cc77', command=self.quit)
-		quitButton.grid(row=3, column=1)
+		quitButton.grid(row=2, column=1)
 
 		self.menuFrame.update()
 		self.centerWindow(w=self.menuFrame.winfo_width(), h=self.menuFrame.winfo_height())
@@ -224,7 +230,6 @@ class SecureContactClient(Frame):
 		self.centerWindow(w=self.downloadFrame.winfo_width(), h=self.downloadFrame.winfo_height())
 
 	def downloadReport(self, browsedDir=None):
-		# Go to website endpoint and download actual file???
 		path = ""
 		if self.downloadFrame.winfo_exists() == 1:
 			path = self.downloadFrame.fileLocationEntry.get()
@@ -247,14 +252,13 @@ class SecureContactClient(Frame):
 		else:
 			if not path[len(path) - 1] == '/':
 				path += '/'
-			#try:
-			f = open(path + self.downloadFrame.dl_file[0], 'w')
-			f.write(self.downloadFrame.dl_file[1])
-			for rf in self.downloadFrame.dl_file[2]:
-				response = requests.get('http://t16-heroku-app.herokuapp.com' + rf, stream=True)
-				split_url = rf.split('/')
-				fln = split_url[len(split_url) - 1]
-				try:
+			try:
+				f = open(path + self.downloadFrame.dl_file[0], 'w')
+				f.write(self.downloadFrame.dl_file[1])
+				for rf in self.downloadFrame.dl_file[2]:
+					response = requests.get('http://t16-heroku-app.herokuapp.com' + rf, stream=True)
+					split_url = rf.split('/')
+					fln = split_url[len(split_url) - 1]
 					new_file = open(path + fln, 'wb')
 					if self.downloadFrame.dl_file[3]:
 						dec_file = self.decryptFile(response.text)
@@ -262,13 +266,9 @@ class SecureContactClient(Frame):
 					else:
 						for block in response.iter_content(1024):
 							new_file.write(block)
-				except Exception as e:
-					print(e)
-					continue
-			self.downloadFrame.destroy()
-			self.parent.geometry("")
-			self.initViewReports()
-			"""
+				self.downloadFrame.destroy()
+				self.parent.geometry("")
+				self.initViewReports()
 			except:
 				self.parent.geometry("")
 				badPathText = Message(self.downloadFrame, text="Invalid path location, please try a different path.")
@@ -278,7 +278,6 @@ class SecureContactClient(Frame):
 				self.centerWindow(w=self.downloadFrame.winfo_width(), h=self.downloadFrame.winfo_height())
 				threading.Timer(3, badPathText.destroy, args=None).start()
 				threading.Timer(3, self.centerWindow, (self.downloadFrame.winfo_width(), self.downloadFrame.winfo_height() - badPathText.winfo_height())).start()
-			"""
 
 	def decryptFile(self, b64d):
 		ciphertext = base64.b64decode(b64d.encode())
@@ -309,8 +308,11 @@ class SecureContactClient(Frame):
 		self.encryptFileFrame = Frame(self, background='#c0c0c0')
 		self.encryptFileFrame.pack(fill=BOTH, expand=1)
 
+		menuButton = Button(self.encryptFileFrame, text="Return to Menu", command= lambda :self.initMenu(2))
+		menuButton.grid(row=0, column=0)
+
 		self.encryptFileFrame.fileUIFrame = Frame(self.encryptFileFrame, background='#c0c0c0')
-		self.encryptFileFrame.fileUIFrame.grid(row=0, column = 0)
+		self.encryptFileFrame.fileUIFrame.grid(row=1, column = 0)
 
 		browseButton = Button(self.encryptFileFrame.fileUIFrame, text="Upload", command=self.browseFile)
 		browseButton.grid(row=0, column=0)
