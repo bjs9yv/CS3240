@@ -28,10 +28,13 @@ class SecureContactClient(Frame):
 		self.loginFrame = Frame(self, background="#c0c0c0")
 		self.loginFrame.pack(fill=BOTH, expand=1)
 		
-		secureIcon = PhotoImage(file="./SecureContact.png")
-		imageLabel = Label(self.loginFrame, image=secureIcon)
-		imageLabel.photo = secureIcon
-		imageLabel.grid(row=0, column=0)
+		try:
+			secureIcon = PhotoImage(file="./SecureContact.png")
+			imageLabel = Label(self.loginFrame, image=secureIcon)
+			imageLabel.photo = secureIcon
+			imageLabel.grid(row=0, column=0)
+		except:
+			pass
 
 		detailsFrame = Frame(self.loginFrame, background='#c0c0c0')
 		detailsFrame.grid(row=2, column=0)
